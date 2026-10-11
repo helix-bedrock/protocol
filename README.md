@@ -17,7 +17,7 @@ Edition server engine in Go.
 | `login` | Login request parsing and client data |
 | `nbt` | Network and little-endian NBT |
 | `conn` | Packet connections over Helix raknet and nethernet: batching, compression, encryption, hooks |
-| `version` | *Planned:* translating between protocol versions |
+| `version` | The `Protocol` interface for older Minecraft versions, `Latest`, and `Set`. Adapters live in their own repo |
 
 ## Credits
 
