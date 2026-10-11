@@ -11,9 +11,12 @@ import (
 	"log/slog"
 	"net"
 	"sync"
+	"sync/atomic"
 	"time"
 
+	"github.com/helix-bedrock/protocol/login"
 	"github.com/helix-bedrock/protocol/packet"
+	"github.com/helix-bedrock/protocol/version"
 )
 
 // Transport carries whole batches. *raknet.Conn and *nethernet.Conn both
@@ -27,8 +30,12 @@ type Transport interface {
 
 // Config configures a Conn. The zero value is valid.
 type Config struct {
-	// Pool decodes packets by ID. If nil, packets from clients are decoded
-	// (packet.NewClientPool), which is what a server reads.
+	// Protocol is the Minecraft version spoken on the wire. Packets read are
+	// converted to the latest version and packets written are converted from
+	// it, so callers only see latest packets. If nil, version.Latest.
+	Protocol version.Protocol
+	// Pool decodes packets by ID. If nil, Protocol.Packets(true): the packets
+	// a client sends, which is what a server reads.
 	Pool packet.Pool
 	// ShieldID is the item runtime ID of the shield, needed to decode items.
 	ShieldID int32
@@ -59,6 +66,14 @@ type Conn struct {
 	dec *packet.Decoder
 	// pending holds packets decoded from the last batch, not yet returned.
 	pending [][]byte
+	// converted holds latest packets made from one read packet, not yet
+	// returned.
+	converted []packet.Packet
+	// latest is true when no conversion is needed.
+	latest bool
+
+	identity atomic.Pointer[login.IdentityData]
+	client   atomic.Pointer[login.ClientData]
 
 	wmu    sync.Mutex
 	enc    *packet.Encoder
@@ -71,13 +86,16 @@ type Conn struct {
 
 // New wraps t in a Conn. Compression and encryption start disabled.
 func New(t Transport, conf Config) *Conn {
+	if conf.Protocol == nil {
+		conf.Protocol = version.Latest
+	}
 	if conf.Pool == nil {
-		conf.Pool = packet.NewClientPool()
+		conf.Pool = conf.Protocol.Packets(true)
 	}
 	if conf.Log == nil {
 		conf.Log = slog.Default()
 	}
-	c := &Conn{t: t, conf: conf, log: conf.Log, shared: conf.Shared, dec: packet.NewDecoder(t), enc: packet.NewEncoder(t), done: make(chan struct{})}
+	c := &Conn{t: t, conf: conf, log: conf.Log, shared: conf.Shared, latest: conf.Protocol == version.Latest, dec: packet.NewDecoder(t), enc: packet.NewEncoder(t), done: make(chan struct{})}
 	if conf.FlushInterval > 0 {
 		go c.flushLoop(conf.FlushInterval)
 	}
@@ -139,6 +157,15 @@ func (c *Conn) ReadRaw() ([]byte, error) {
 // error; the connection can still be read after it.
 func (c *Conn) ReadPacket() (packet.Packet, error) {
 	for {
+		if len(c.converted) > 0 {
+			pk := c.converted[0]
+			c.converted[0] = nil
+			c.converted = c.converted[1:]
+			if c.runPacket(true, packet.Header{PacketID: pk.ID()}, &pk) {
+				return pk, nil
+			}
+			continue
+		}
 		b, err := c.ReadRaw()
 		if err != nil {
 			return nil, err
@@ -147,10 +174,40 @@ func (c *Conn) ReadPacket() (packet.Packet, error) {
 		if err != nil {
 			return nil, err
 		}
-		if c.runPacket(true, h, &pk) {
-			return pk, nil
+		if c.latest {
+			if c.runPacket(true, h, &pk) {
+				return pk, nil
+			}
+			continue
 		}
+		c.converted = c.conf.Protocol.ConvertToLatest(pk, c)
 	}
+}
+
+// Protocol returns the Minecraft version spoken on the wire.
+func (c *Conn) Protocol() version.Protocol { return c.conf.Protocol }
+
+// SetLoginData stores the identity and client data the player logged in
+// with, which version conversions may need. The server calls it after login.
+func (c *Conn) SetLoginData(id login.IdentityData, cd login.ClientData) {
+	c.identity.Store(&id)
+	c.client.Store(&cd)
+}
+
+// IdentityData returns the data set with SetLoginData, or zero values.
+func (c *Conn) IdentityData() login.IdentityData {
+	if p := c.identity.Load(); p != nil {
+		return *p
+	}
+	return login.IdentityData{}
+}
+
+// ClientData returns the data set with SetLoginData, or zero values.
+func (c *Conn) ClientData() login.ClientData {
+	if p := c.client.Load(); p != nil {
+		return *p
+	}
+	return login.ClientData{}
 }
 
 // decode decodes one raw packet.
@@ -166,7 +223,9 @@ func (c *Conn) decode(b []byte) (packet.Packet, packet.Header, error) {
 		return &packet.Unknown{PacketID: h.PacketID, Payload: append([]byte(nil), payload...)}, h, nil
 	}
 	pk := f()
-	if err := packet.Decode(pk, payload, c.conf.ShieldID, !c.conf.DisableLimits); err != nil {
+	buf := bytes.NewBuffer(payload)
+	pr := c.conf.Protocol.NewReader(buf, c.conf.ShieldID, !c.conf.DisableLimits)
+	if err := packet.DecodeWith(pk, pr, buf); err != nil {
 		return nil, h, err
 	}
 	return pk, h, nil
@@ -175,16 +234,28 @@ func (c *Conn) decode(b []byte) (packet.Packet, packet.Header, error) {
 // WritePacket encodes pk and buffers it until the next flush. Packet-out hooks
 // run first and may change or drop it.
 func (c *Conn) WritePacket(pk packet.Packet) error {
-	h := packet.Header{PacketID: pk.ID()}
-	if !c.runPacket(false, h, &pk) {
+	if !c.runPacket(false, packet.Header{PacketID: pk.ID()}, &pk) {
 		return nil
 	}
+	if c.latest {
+		return c.encode(pk)
+	}
+	for _, out := range c.conf.Protocol.ConvertFromLatest(pk, c) {
+		if err := c.encode(out); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// encode encodes pk in the wire version and buffers it.
+func (c *Conn) encode(pk packet.Packet) error {
 	buf := bytes.NewBuffer(make([]byte, 0, 64))
-	h.PacketID = pk.ID()
+	h := packet.Header{PacketID: pk.ID()}
 	if err := h.Write(buf); err != nil {
 		return err
 	}
-	if err := packet.Encode(pk, buf, c.conf.ShieldID); err != nil {
+	if err := packet.EncodeWith(pk, c.conf.Protocol.NewWriter(buf, c.conf.ShieldID)); err != nil {
 		return err
 	}
 	return c.WriteRaw(buf.Bytes())

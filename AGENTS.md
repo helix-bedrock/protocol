@@ -27,6 +27,7 @@ go test -race ./...
 - `login`: login request parsing and client data.
 - `nbt`: NBT encoding.
 - `conn`: packet connections over a transport (batching, compression, encryption, hooks).
+- `version`: the `Protocol` interface; `conn` converts every packet through it.
 - `internal`: small shared helpers; `internal/hook` is the hook list.
 
 ## Invariants: do not break these
