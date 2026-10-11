@@ -129,7 +129,10 @@ const maxSliceLength = 1024
 func SliceOfLen[T any, S ~*[]T, A PtrMarshaler[T]](r IO, l uint32, x S) {
 	limit, ok := r.(sliceReader)
 	if ok {
-		limit.SliceLength(l, maxSliceLength)
+		if !limit.SliceLength(l, maxSliceLength) {
+			*x = nil
+			return
+		}
 		*x = make([]T, l)
 	}
 
@@ -142,7 +145,10 @@ func SliceOfLen[T any, S ~*[]T, A PtrMarshaler[T]](r IO, l uint32, x S) {
 func FuncSliceOfLen[T any, S ~*[]T](r IO, l uint32, x S, f func(*T)) {
 	limit, ok := r.(sliceReader)
 	if ok {
-		limit.SliceLength(l, maxSliceLength)
+		if !limit.SliceLength(l, maxSliceLength) {
+			*x = nil
+			return
+		}
 		*x = make([]T, l)
 	}
 
@@ -152,7 +158,7 @@ func FuncSliceOfLen[T any, S ~*[]T](r IO, l uint32, x S, f func(*T)) {
 }
 
 type sliceReader interface {
-	SliceLength(value uint32, max uint32)
+	SliceLength(value uint32, max uint32) bool
 }
 
 // FuncIOSliceOfLen reads/writes the elements of a slice of type T with length l using func f.

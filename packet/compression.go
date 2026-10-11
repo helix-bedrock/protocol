@@ -180,7 +180,7 @@ func (snappyCompression) CompressAppend(dst, decompressed []byte) ([]byte, error
 	// batch header and compression ID in the same allocation as the payload.
 	n := s2.MaxEncodedLen(len(decompressed))
 	if n < 0 {
-		panic(s2.ErrTooLarge)
+		return dst, s2.ErrTooLarge
 	}
 	offset := len(dst)
 	dst = slices.Grow(dst, n)

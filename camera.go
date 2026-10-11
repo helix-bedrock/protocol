@@ -456,7 +456,7 @@ func (x *CameraAimAssistCategory) Marshal(r IO) {
 	Single(r, &x.Priorities)
 }
 
-// CameraAimAssistPriorities represents the block and entity specific priorities for targetting. The aim
+// CameraAimAssistPriorities represents the block and entity specific priorities for targeting. The aim
 // assist will select the block or entity with the highest priority within the specified thresholds.
 type CameraAimAssistPriorities struct {
 	// Entities is a list of priorities for specific entity identifiers.
@@ -509,7 +509,7 @@ type CameraAimAssistPreset struct {
 	BlockTagExclusions []string
 	// EntityTypeFamilyExclusions is a list of entity type families that should be ignored by the aim assist.
 	EntityTypeFamilyExclusions []string
-	// LiquidTargets is a list of entity identifiers that should be targetted when inside of a liquid.
+	// LiquidTargets is a list of entity identifiers that should be targeted when inside of a liquid.
 	LiquidTargets []string
 	// ItemSettings is a list of settings for specific item identifiers. If an item is not listed here, it
 	// will fallback to DefaultItemSettings or HandSettings if no item is held.

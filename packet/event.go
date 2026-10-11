@@ -25,6 +25,10 @@ func (*Event) ID() uint32 {
 func (pk *Event) Marshal(io protocol.IO) {
 	io.ActorRuntimeIDVarint64(&pk.EntityRuntimeID)
 	io.EventType(&pk.Event)
+	if pk.Event == nil {
+		// Unknown event type: the reader already holds the error.
+		return
+	}
 	io.Bool(&pk.UsePlayerID)
 	io.EventOrdinal(&pk.Event)
 	pk.Event.Marshal(io)

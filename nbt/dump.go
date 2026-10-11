@@ -84,7 +84,7 @@ func (s *dumpState) encodeTagType(val any) string {
 			return "TAG_LongArray"
 		}
 	}
-	panic("should not happen")
+	return "unknown"
 }
 
 // encodeTagValue encodes a value passed to a format in which they are displayed in the dump string.
@@ -164,5 +164,5 @@ func (s *dumpState) encodeTagValue(val any) string {
 			return b.String()
 		}
 	}
-	panic("should not happen")
+	return "unknown"
 }

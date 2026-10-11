@@ -20,7 +20,7 @@ type EncryptionDisabler interface {
 
 // PacketReader may be implemented by transports that can read complete packet
 // payloads directly.
-type PacketReader interface {
+type PacketReader interface { //nolint:revive // kept for gophertunnel compatibility
 	// ReadPacket reads one complete packet payload from the transport.
 	ReadPacket() ([]byte, error)
 }

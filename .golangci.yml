@@ -27,6 +27,17 @@ linters:
         linters:
           - gosec
           - unparam
+      # The protocol has thousands of exported IDs and Marshal methods whose
+      # meaning is their name; they come from gophertunnel undocumented.
+      - linters: [revive]
+        text: 'exported: exported (const|method [A-Za-z]+.Marshal|var)'
+      # unsafe string/byte conversions are deliberate in the hot decode path.
+      - linters: [gosec]
+        text: "G103"
+      # Sound names such as "...Token..." are not credentials.
+      - path: packet/level_sound_event\.go
+        linters: [gosec]
+        text: "G101"
 
 formatters:
   enable:

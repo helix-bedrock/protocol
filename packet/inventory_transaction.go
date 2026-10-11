@@ -54,5 +54,9 @@ func (pk *InventoryTransaction) Marshal(io protocol.IO) {
 	}
 	io.TransactionDataType(&pk.TransactionData)
 	protocol.Slice(io, &pk.Actions)
+	if pk.TransactionData == nil {
+		// Unknown transaction type: the reader already holds the error.
+		return
+	}
 	pk.TransactionData.Marshal(io)
 }

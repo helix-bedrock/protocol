@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"crypto/ecdsa"
-	"crypto/md5"
+	"crypto/md5" //nolint:gosec // see identityFromXUID
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -34,7 +35,8 @@ type request struct {
 	Certificate certificate `json:"Certificate"`
 	// AuthenticationType is the authentication type of the request.
 	AuthenticationType uint8 `json:"AuthenticationType"`
-	// Token is an empty string, it's unclear what's used for.
+	// Token is the multiplayer token: an OpenID token issued by Minecraft
+	// services that holds the player's identity and public key.
 	Token string `json:"Token"`
 	// RawToken holds the raw token that follows the JWT chain, holding the ClientData.
 	RawToken string `json:"-"`
@@ -79,7 +81,39 @@ var mojangKey = new(ecdsa.PublicKey)
 type AuthResult struct {
 	PublicKey             *ecdsa.PublicKey
 	XBOXLiveAuthenticated bool
+	// Method is how the player's identity was read.
+	Method Method
+	// SentLegacyChain is true if the request carried a certificate chain. A
+	// current vanilla client sends the token alone, so a chain sent next to a
+	// token means the client is not the vanilla client it claims to be.
+	SentLegacyChain bool
 }
+
+// Method is the way a login request proved the player's identity.
+type Method uint8
+
+const (
+	// MethodToken is the current form: AuthenticationType and a multiplayer
+	// Token, with no certificate chain.
+	MethodToken Method = iota
+	// MethodLegacyChain is the old form: a certificate chain signed by Mojang.
+	// It is only accepted when Config.AllowLegacyChain is set.
+	MethodLegacyChain
+)
+
+// Config controls how ParseWithConfig verifies a login request.
+type Config struct {
+	// Verifier verifies the multiplayer token. If nil, the token is read
+	// without verification (offline mode) and XBOXLiveAuthenticated is false.
+	Verifier *oidc.IDTokenVerifier
+	// AllowLegacyChain accepts requests that only carry the old certificate
+	// chain. It is off by default: current clients always send a token.
+	AllowLegacyChain bool
+}
+
+// ErrLegacyChain is returned when a request carries only the old certificate
+// chain and Config.AllowLegacyChain is false.
+var ErrLegacyChain = errors.New("login request uses the legacy certificate chain, which is not allowed")
 
 // Parse parses and verifies the login request passed. The AuthResult returned holds the ecdsa.PublicKey that
 // was parsed (which is used for encryption) and a bool specifying if the request was authenticated by XBOX
@@ -88,7 +122,18 @@ type AuthResult struct {
 // the client. Rather, it is obtained from an authentication endpoint. The ClientData can, however, be edited
 // freely by the client.
 // The verifier will be used for parsing the OpenID token included in the first chain of the login request.
+//
+// Parse accepts the legacy certificate chain, like gophertunnel. Helix code
+// should use ParseWithConfig, which refuses it by default.
 func Parse(request []byte, verifier *oidc.IDTokenVerifier) (IdentityData, ClientData, AuthResult, error) {
+	return ParseWithConfig(request, Config{Verifier: verifier, AllowLegacyChain: true})
+}
+
+// ParseWithConfig parses and verifies a login request. The multiplayer token
+// (AuthenticationType + Token) is the primary form; the legacy certificate
+// chain is only accepted when conf.AllowLegacyChain is set.
+func ParseWithConfig(request []byte, conf Config) (IdentityData, ClientData, AuthResult, error) {
+	verifier := conf.Verifier
 	var (
 		iData IdentityData
 		cData ClientData
@@ -102,8 +147,12 @@ func Parse(request []byte, verifier *oidc.IDTokenVerifier) (IdentityData, Client
 
 	var (
 		authenticated bool
+		method        = MethodToken
 		t             = time.Now()
 	)
+	if req.Token == "" && !conf.AllowLegacyChain {
+		return iData, cData, res, ErrLegacyChain
+	}
 	switch {
 	case verifier != nil && req.Token != "":
 		// The context here is used for making requests via remote key set, which does not normally
@@ -160,6 +209,7 @@ func Parse(request []byte, verifier *oidc.IDTokenVerifier) (IdentityData, Client
 			return iData, cData, res, err
 		}
 		iData, key, authenticated = legacyID, legacyKey, legacyAuthed
+		method = MethodLegacyChain
 	}
 
 	if err := parseFullClaim(req.RawToken, key, &cData); err != nil {
@@ -175,7 +225,22 @@ func Parse(request []byte, verifier *oidc.IDTokenVerifier) (IdentityData, Client
 	if err := cData.Validate(); err != nil {
 		return iData, cData, res, fmt.Errorf("validate client data: %w", err)
 	}
-	return iData, cData, AuthResult{PublicKey: key, XBOXLiveAuthenticated: authenticated}, nil
+	return iData, cData, AuthResult{
+		PublicKey:             key,
+		XBOXLiveAuthenticated: authenticated,
+		Method:                method,
+		SentLegacyChain:       hasChain(req.Certificate.Chain),
+	}, nil
+}
+
+// hasChain reports whether c holds at least one non-empty certificate.
+func hasChain(c chain) bool {
+	for _, s := range c {
+		if s != "" {
+			return true
+		}
+	}
+	return false
 }
 
 // parseLegacyChain verifies the legacy Mojang chain and returns IdentityData from extraData,
@@ -251,7 +316,7 @@ func parseLoginRequest(requestData []byte) (*request, error) {
 	if err := binary.Read(buf, binary.LittleEndian, &chainLength); err != nil {
 		return nil, fmt.Errorf("read chain length: %w", err)
 	}
-	if chainLength <= 0 {
+	if chainLength <= 0 || int(chainLength) > buf.Len() {
 		return nil, fmt.Errorf("invalid chain length: %d", chainLength)
 	}
 	chainData := buf.Next(int(chainLength))
@@ -281,6 +346,9 @@ func parseLoginRequest(requestData []byte) (*request, error) {
 	var rawLength int32
 	if err := binary.Read(buf, binary.LittleEndian, &rawLength); err != nil {
 		return nil, fmt.Errorf("read raw token length: %w", err)
+	}
+	if rawLength < 0 || int(rawLength) > buf.Len() {
+		return nil, fmt.Errorf("invalid raw token length: %d", rawLength)
 	}
 	r.RawToken = string(buf.Next(int(rawLength)))
 	if n := buf.Len(); n != 0 {
@@ -475,7 +543,7 @@ func (tc tokenClaims) identityData() IdentityData {
 func identityFromXUID(xuid string) uuid.UUID {
 	// See [github.com/google/uuid.NewHash], This takes 'pocket-auth-1-uuid:' as
 	// the name-space instead of UUID and uses the player's XUID to compute a v3 UUID.
-	hash := md5.New()
+	hash := md5.New() //nolint:gosec // vanilla derives the identity UUID with MD5
 	hash.Write([]byte("pocket-auth-1-xuid:"))
 	hash.Write([]byte(xuid))
 	s := hash.Sum(nil)
@@ -538,4 +606,35 @@ func ParsePublicKey(b64Data string, key *ecdsa.PublicKey) error {
 func MarshalPublicKey(key *ecdsa.PublicKey) string {
 	data, _ := x509.MarshalPKIXPublicKey(key)
 	return base64.StdEncoding.EncodeToString(data)
+}
+
+// EncodeToken builds a login request in the current form: only
+// AuthenticationType and the multiplayer token, followed by the client data
+// signed with key. It is what a current vanilla client sends.
+func EncodeToken(token string, data ClientData, key *ecdsa.PrivateKey) ([]byte, error) {
+	signer, err := jose.NewSigner(
+		jose.SigningKey{Key: key, Algorithm: jose.ES384},
+		&jose.SignerOptions{ExtraHeaders: map[jose.HeaderKey]any{"x5u": MarshalPublicKey(&key.PublicKey)}},
+	)
+	if err != nil {
+		return nil, fmt.Errorf("create signer: %w", err)
+	}
+	rawToken, err := jwt.Signed(signer).Claims(data).Serialize()
+	if err != nil {
+		return nil, fmt.Errorf("sign client data: %w", err)
+	}
+	// Fields in the order a client sends them.
+	outer, err := json.Marshal(struct {
+		AuthenticationType uint8  `json:"AuthenticationType"`
+		Token              string `json:"Token"`
+	}{Token: token})
+	if err != nil {
+		return nil, fmt.Errorf("encode request: %w", err)
+	}
+	buf := bytes.NewBuffer(nil)
+	_ = binary.Write(buf, binary.LittleEndian, int32(len(outer)))
+	buf.Write(outer)
+	_ = binary.Write(buf, binary.LittleEndian, int32(len(rawToken)))
+	buf.WriteString(rawToken)
+	return buf.Bytes(), nil
 }

@@ -18,7 +18,8 @@ import (
 
 // Reader implements reading operations for reading types from Minecraft packets. Each Packet implementation
 // has one passed to it.
-// Reader's uses should always be encapsulated with a deferred recovery. Reader panics on invalid data.
+// Reader never panics. On invalid data it stores the first error, which Err
+// returns, and every later read returns zero values.
 type Reader struct {
 	r interface {
 		io.Reader
@@ -26,6 +27,7 @@ type Reader struct {
 	}
 	shieldID      int32
 	limitsEnabled bool
+	err           error
 	buf           [8]byte
 }
 
@@ -42,7 +44,8 @@ func (r *Reader) Uint8(x *uint8) {
 	var err error
 	*x, err = r.r.ReadByte()
 	if err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 }
 
@@ -57,7 +60,8 @@ func (r *Reader) Int8(x *int8) {
 func (r *Reader) Bool(x *bool) {
 	u, err := r.r.ReadByte()
 	if err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 	*x = *(*bool)(unsafe.Pointer(&u))
 }
@@ -71,12 +75,17 @@ func (r *Reader) StringUTF(x *string) {
 	r.Int16(&length)
 	l := int(length)
 	if l > math.MaxInt16 {
-		r.panic(errStringTooLong)
+		r.fail(errStringTooLong)
+		return
 	}
 	r.checkRemaining(l, "string")
+	if r.err != nil {
+		return
+	}
 	data := make([]byte, l)
 	if _, err := io.ReadFull(r.r, data); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 	*x = *(*string)(unsafe.Pointer(&data))
 }
@@ -87,12 +96,17 @@ func (r *Reader) String(x *string) {
 	r.Varuint32(&length)
 	l := int(length)
 	if l > math.MaxInt32 {
-		r.panic(errStringTooLong)
+		r.fail(errStringTooLong)
+		return
 	}
 	r.checkRemaining(l, "string")
+	if r.err != nil {
+		return
+	}
 	data := make([]byte, l)
 	if _, err := io.ReadFull(r.r, data); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 	*x = *(*string)(unsafe.Pointer(&data))
 }
@@ -103,12 +117,17 @@ func (r *Reader) ByteSlice(x *[]byte) {
 	r.Varuint32(&length)
 	l := int(length)
 	if l > math.MaxInt32 {
-		r.panic(errStringTooLong)
+		r.fail(errStringTooLong)
+		return
 	}
 	r.checkRemaining(l, "byte slice")
+	if r.err != nil {
+		return
+	}
 	data := make([]byte, l)
 	if _, err := io.ReadFull(r.r, data); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 	*x = data
 }
@@ -133,11 +152,13 @@ func (r *Reader) BlockPos(x *BlockPos) {
 	r.Varint32(&x[2])
 }
 
+// ChunkPos reads a ChunkPos as two varint32s.
 func (r *Reader) ChunkPos(x *ChunkPos) {
 	r.Varint32(&x[0])
 	r.Varint32(&x[1])
 }
 
+// SubChunkPos reads a SubChunkPos as three int32s.
 func (r *Reader) SubChunkPos(x *SubChunkPos) {
 	r.Int32(&x[0])
 	r.Int32(&x[1])
@@ -200,7 +221,8 @@ func (r *Reader) Bytes(p *[]byte) {
 	var err error
 	*p, err = io.ReadAll(r.r)
 	if err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 }
 
@@ -210,14 +232,16 @@ func (r *Reader) NBT(m *map[string]any, encoding nbt.Encoding) {
 	dec.AllowZero = true
 
 	if err := dec.Decode(m); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 }
 
 // NBTList reads a list of NBT tags from the underlying buffer.
 func (r *Reader) NBTList(m *[]any, encoding nbt.Encoding) {
 	if err := nbt.NewDecoderWithEncoding(r.r, encoding).Decode(m); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 }
 
@@ -225,7 +249,8 @@ func (r *Reader) NBTList(m *[]any, encoding nbt.Encoding) {
 func (r *Reader) UUID(x *uuid.UUID) {
 	var b [16]byte
 	if _, err := io.ReadFull(r.r, b[:]); err != nil {
-		r.panic(err)
+		r.fail(err)
+		return
 	}
 
 	// The UUIDs we read are Little Endian, but the uuid library is based on Big Endian UUIDs, so we need to
@@ -293,7 +318,7 @@ func (r *Reader) EntityMetadata(x *EntityMetadata) {
 
 	var count uint32
 	r.Varuint32(&count)
-	for i := uint32(0); i < count; i++ {
+	for i := uint32(0); i < count && r.err == nil; i++ {
 		var key, dataType uint32
 		r.Varuint32(&key)
 		r.Varuint32(&dataType)
@@ -554,9 +579,11 @@ func (r *Reader) Bitset(x *Bitset, size int) {
 	for i := 0; i < size; i += 7 {
 		b, err := r.r.ReadByte()
 		if err != nil {
-			r.panic(err)
+			r.fail(err)
+			return
 		} else if i+bits.Len8(b) > size {
-			r.panic(errBitsetOverflow)
+			r.fail(errBitsetOverflow)
+			return
 		}
 
 		bi := big.NewInt(int64(b & 0x7f))
@@ -566,7 +593,7 @@ func (r *Reader) Bitset(x *Bitset, size int) {
 		}
 	}
 
-	r.panic(errBitsetOverflow)
+	r.fail(errBitsetOverflow)
 }
 
 // PackSetting reads a PackSetting from the reader.
@@ -608,22 +635,24 @@ func (r *Reader) ShapeData(x *ShapeData) {
 }
 
 // SliceLength validates a length prefix before a slice is allocated.
-func (r *Reader) SliceLength(value uint32, max uint32) {
+// It returns false if the slice must not be allocated.
+func (r *Reader) SliceLength(value uint32, max uint32) bool {
 	if value > max && r.limitsEnabled {
-		r.panicf("slice length was too long: length of %v (max %v)", value, max)
+		r.failf("slice length was too long: length of %v (max %v)", value, max)
 	}
 	if remaining, ok := r.r.(interface{ Len() int }); ok && uint64(value) > uint64(remaining.Len()) {
-		r.panicf("slice length %v exceeds remaining packet payload %v", value, remaining.Len())
+		r.failf("slice length %v exceeds remaining packet payload %v", value, remaining.Len())
 	}
+	return r.err == nil
 }
 
 // checkRemaining checks that a field's declared length fits within the remaining packet payload.
 func (r *Reader) checkRemaining(length int, field string) {
 	if length < 0 {
-		r.panicf("%s length was negative: %v", field, length)
+		r.failf("%s length was negative: %v", field, length)
 	}
 	if remaining, ok := r.r.(interface{ Len() int }); ok && length > remaining.Len() {
-		r.panicf("%s length %v exceeds remaining packet payload %v", field, length, remaining.Len())
+		r.failf("%s length %v exceeds remaining packet payload %v", field, length, remaining.Len())
 	}
 }
 
@@ -632,14 +661,14 @@ func (r *Reader) ShieldID() int32 {
 	return r.shieldID
 }
 
-// UnknownEnumOption panics with an unknown enum option error.
+// UnknownEnumOption fails with an unknown enum option error.
 func (r *Reader) UnknownEnumOption(value any, enum string) {
-	r.panicf("unknown value '%#v' for enum type '%v'", value, enum)
+	r.failf("unknown value '%#v' for enum type '%v'", value, enum)
 }
 
-// InvalidValue panics with an error indicating that the value passed is not valid for a specific field.
+// InvalidValue fails with an error indicating that the value passed is not valid for a specific field.
 func (r *Reader) InvalidValue(value any, forField, reason string) {
-	r.panicf("invalid value '%v' for %v: %v", value, forField, reason)
+	r.failf("invalid value '%v' for %v: %v", value, forField, reason)
 }
 
 // errVarIntOverflow is an error set if one of the Varint methods encounters a varint that does not terminate
@@ -653,7 +682,8 @@ func (r *Reader) Varint64(x *int64) {
 	for i := 0; i < 70; i += 7 {
 		b, err := r.r.ReadByte()
 		if err != nil {
-			r.panic(err)
+			r.fail(err)
+			return
 		}
 
 		ux |= uint64(b&0x7f) << i
@@ -665,7 +695,7 @@ func (r *Reader) Varint64(x *int64) {
 			return
 		}
 	}
-	r.panic(errVarIntOverflow)
+	r.fail(errVarIntOverflow)
 }
 
 // ActorRuntimeID reads an entity runtime ID encoded as an unsigned varint.
@@ -709,7 +739,8 @@ func (r *Reader) Varuint64(x *uint64) {
 	for i := 0; i < 70; i += 7 {
 		b, err := r.r.ReadByte()
 		if err != nil {
-			r.panic(err)
+			r.fail(err)
+			return
 		}
 
 		v |= uint64(b&0x7f) << i
@@ -718,7 +749,7 @@ func (r *Reader) Varuint64(x *uint64) {
 			return
 		}
 	}
-	r.panic(errVarIntOverflow)
+	r.fail(errVarIntOverflow)
 }
 
 // Varint32 reads up to 5 bytes from the underlying buffer into an int32.
@@ -727,7 +758,8 @@ func (r *Reader) Varint32(x *int32) {
 	for i := 0; i < 35; i += 7 {
 		b, err := r.r.ReadByte()
 		if err != nil {
-			r.panic(err)
+			r.fail(err)
+			return
 		}
 
 		ux |= uint32(b&0x7f) << i
@@ -739,7 +771,7 @@ func (r *Reader) Varint32(x *int32) {
 			return
 		}
 	}
-	r.panic(errVarIntOverflow)
+	r.fail(errVarIntOverflow)
 }
 
 // Varuint32 reads up to 5 bytes from the underlying buffer into a uint32.
@@ -748,7 +780,8 @@ func (r *Reader) Varuint32(x *uint32) {
 	for i := 0; i < 35; i += 7 {
 		b, err := r.r.ReadByte()
 		if err != nil {
-			r.panic(err)
+			r.fail(err)
+			return
 		}
 
 		v |= uint32(b&0x7f) << i
@@ -757,15 +790,31 @@ func (r *Reader) Varuint32(x *uint32) {
 			return
 		}
 	}
-	r.panic(errVarIntOverflow)
+	r.fail(errVarIntOverflow)
 }
 
-// panicf panics with the format and values passed and assigns the error created to the Reader.
-func (r *Reader) panicf(format string, a ...any) {
-	panic(fmt.Errorf(format, a...))
+// Err returns the first error the Reader met, or nil.
+func (r *Reader) Err() error {
+	return r.err
 }
 
-// panic panics with the error passed, similarly to panicf.
-func (r *Reader) panic(err error) {
-	panic(err)
+// failf stores an error built from the format and values passed.
+func (r *Reader) failf(format string, a ...any) {
+	r.fail(fmt.Errorf(format, a...))
 }
+
+// fail stores err if it is the first error and makes every later read fail.
+func (r *Reader) fail(err error) {
+	if r.err != nil {
+		return
+	}
+	r.err = err
+	r.r = failedReader{err: err}
+}
+
+// failedReader is the source of a Reader after an error: every read fails.
+type failedReader struct{ err error }
+
+func (f failedReader) Read([]byte) (int, error) { return 0, f.err }
+func (f failedReader) ReadByte() (byte, error)  { return 0, f.err }
+func (f failedReader) Len() int                 { return 0 }

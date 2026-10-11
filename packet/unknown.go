@@ -2,6 +2,7 @@ package packet
 
 import (
 	"fmt"
+
 	"github.com/helix-bedrock/protocol"
 )
 
