@@ -2,6 +2,7 @@ package nbt
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"go/ast"
 	"io"
@@ -391,12 +392,21 @@ func (d *Decoder) unmarshalTag(val reflect.Value, t tagType, tagName string) err
 			if length < 0 {
 				return BufferOverrunError{Op: "Slice"}
 			}
+			// Every element takes at least one byte, so a length beyond the
+			// remaining data is invalid and must not be allocated. TAG_End
+			// elements take none, so a list of them must be empty.
+			if listType == tagEnd && length != 0 {
+				return BufferOverrunError{Op: "Slice"}
+			}
+			if err = d.checkRemaining(int(length), "Slice"); err != nil {
+				return err
+			}
 			v := reflect.MakeSlice(sliceType, int(length), int(length))
 			for i := 0; i < int(length); i++ {
 				if err := d.unmarshalTag(v.Index(i), listType, ""); err != nil {
 					// An error occurred during the decoding of one of the elements of the TAG_List, meaning it
 					// either had an invalid type or the NBT was invalid.
-					if e, ok := err.(InvalidTypeError); ok {
+					if e, ok := errors.AsType[InvalidTypeError](err); ok {
 						return InvalidTypeError{Off: d.r.off, FieldType: sliceType.Elem(), Field: fmt.Sprintf("%v[%v].%v", tagName, i, e.Field), TagType: listType}
 					}
 					return err

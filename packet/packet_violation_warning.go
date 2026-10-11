@@ -17,7 +17,7 @@ const (
 // PacketViolationWarning is sent by the client when it receives an invalid packet from the server. It holds
 // some information on the error that occurred.
 // noinspection GoNameStartsWithPackageName
-type PacketViolationWarning struct {
+type PacketViolationWarning struct { //nolint:revive // vanilla packet name
 	// Type is the type of violation. It is one of the constants above.
 	Type int32
 	// Severity specifies the severity of the packet violation. The action the client takes after this

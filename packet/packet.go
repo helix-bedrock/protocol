@@ -1,8 +1,9 @@
 package packet
 
 import (
-	"github.com/helix-bedrock/protocol"
 	"io"
+
+	"github.com/helix-bedrock/protocol"
 )
 
 // Packet represents a packet that may be sent over a Minecraft network connection. The packet needs to hold

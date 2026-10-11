@@ -26,6 +26,7 @@ type Writer struct {
 		io.ByteWriter
 	}
 	shieldID int32
+	err      error
 	buf      [8]byte
 }
 
@@ -134,6 +135,7 @@ func (w *Writer) ChunkPos(x *ChunkPos) {
 	w.Varint32(&x[1])
 }
 
+// SubChunkPos writes a SubChunkPos as three int32s.
 func (w *Writer) SubChunkPos(x *SubChunkPos) {
 	w.Int32(&x[0])
 	w.Int32(&x[1])
@@ -170,7 +172,9 @@ func (w *Writer) BEARGB(x *color.RGBA) {
 
 // UUID writes a UUID to the underlying buffer.
 func (w *Writer) UUID(x *uuid.UUID) {
-	b := append((*x)[8:], (*x)[:8]...)
+	b := make([]byte, 0, 16)
+	b = append(b, (*x)[8:]...)
+	b = append(b, (*x)[:8]...)
 	for i, j := 0, 15; i < j; i, j = i+1, j-1 {
 		b[i], b[j] = b[j], b[i]
 	}
@@ -459,7 +463,7 @@ var varintMaxByteValue = big.NewInt(0x80)
 // Bitset writes a Bitset x to the underlying buffer.
 func (w *Writer) Bitset(x *Bitset, size int) {
 	if x.size != size {
-		w.panicf("bitset size mismatch: expected %v, got %v", size, x.size)
+		w.failf("bitset size mismatch: expected %v, got %v", size, x.size)
 	}
 	u := new(big.Int)
 	u.Set(x.int)
@@ -598,14 +602,14 @@ func (w *Writer) Varuint32(x *uint32) {
 // NBT writes a map as NBT to the underlying buffer using the encoding passed.
 func (w *Writer) NBT(x *map[string]any, encoding nbt.Encoding) {
 	if err := nbt.NewEncoderWithEncoding(w.w, encoding).Encode(*x); err != nil {
-		panic(err)
+		w.fail(err)
 	}
 }
 
 // NBTList writes a slice as NBT to the underlying buffer using the encoding passed.
 func (w *Writer) NBTList(x *[]any, encoding nbt.Encoding) {
 	if err := nbt.NewEncoderWithEncoding(w.w, encoding).Encode(*x); err != nil {
-		panic(err)
+		w.fail(err)
 	}
 }
 
@@ -614,17 +618,30 @@ func (w *Writer) ShieldID() int32 {
 	return w.shieldID
 }
 
-// UnknownEnumOption panics with an unknown enum option error.
+// UnknownEnumOption fails with an unknown enum option error.
 func (w *Writer) UnknownEnumOption(value any, enum string) {
-	w.panicf("unknown value '%#v' for enum type '%v'", value, enum)
+	w.failf("unknown value '%#v' for enum type '%v'", value, enum)
 }
 
-// InvalidValue panics with an invalid value error.
+// InvalidValue fails with an invalid value error.
 func (w *Writer) InvalidValue(value any, forField, reason string) {
-	w.panicf("invalid value '%v' for %v: %v", value, forField, reason)
+	w.failf("invalid value '%v' for %v: %v", value, forField, reason)
 }
 
-// panicf panics with the format and values passed.
-func (w *Writer) panicf(format string, a ...any) {
-	panic(fmt.Errorf(format, a...))
+// Err returns the first error the Writer met, or nil. A packet written while
+// Err is not nil must not be sent.
+func (w *Writer) Err() error {
+	return w.err
+}
+
+// failf stores an error built from the format and values passed.
+func (w *Writer) failf(format string, a ...any) {
+	w.fail(fmt.Errorf(format, a...))
+}
+
+// fail stores err if it is the first error.
+func (w *Writer) fail(err error) {
+	if w.err == nil {
+		w.err = err
+	}
 }

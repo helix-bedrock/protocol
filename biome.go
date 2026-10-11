@@ -286,6 +286,7 @@ func (x *BiomeConsolidatedFeature) Marshal(r IO) {
 	r.Bool(&x.CanUseInternal)
 }
 
+// BiomeScatterParameter controls how a biome feature is scattered.
 type BiomeScatterParameter struct {
 	// Coordinates is a list of coordinate rules to scatter the feature within.
 	Coordinates []BiomeCoordinate

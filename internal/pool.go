@@ -1,3 +1,4 @@
+// Package internal holds small helpers shared by the protocol packages.
 package internal
 
 import (

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/ecdsa"
-	"crypto/md5"
+	"crypto/md5" //nolint:gosec // see identityFromXUID
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/binary"
@@ -475,7 +475,7 @@ func (tc tokenClaims) identityData() IdentityData {
 func identityFromXUID(xuid string) uuid.UUID {
 	// See [github.com/google/uuid.NewHash], This takes 'pocket-auth-1-uuid:' as
 	// the name-space instead of UUID and uses the player's XUID to compute a v3 UUID.
-	hash := md5.New()
+	hash := md5.New() //nolint:gosec // vanilla derives the identity UUID with MD5
 	hash.Write([]byte("pocket-auth-1-xuid:"))
 	hash.Write([]byte(xuid))
 	s := hash.Sum(nil)

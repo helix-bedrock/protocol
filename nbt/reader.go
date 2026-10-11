@@ -58,6 +58,15 @@ func (b *offsetReader) Read(p []byte) (n int, err error) {
 	return
 }
 
+// fits reports whether n more bytes may follow. It is true when the reader
+// cannot tell how many bytes remain.
+func (b *offsetReader) fits(n int64) bool {
+	if remaining, ok := b.Reader.(interface{ Len() int }); ok {
+		return n <= int64(remaining.Len())
+	}
+	return true
+}
+
 // readArrayBytes validates a fixed-width array and only allocates for bytes actually received.
 func (b *offsetReader) readArrayBytes(count int32, width int, op string) ([]byte, error) {
 	if count < 0 || int64(count) > int64(int(^uint(0)>>1)/width) {

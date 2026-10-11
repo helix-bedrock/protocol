@@ -46,5 +46,5 @@ func resourcePackResponseToString(x uint32) (string, bool) {
 	if x >= uint32(len(names)) {
 		return "", false
 	}
-	return names[x], true
+	return names[x], true //nolint:gosec // x is bounds-checked above
 }

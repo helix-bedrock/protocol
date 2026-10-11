@@ -433,6 +433,7 @@ func base64DecLength(base64Data string, validLengths ...int) error {
 	return fmt.Errorf("invalid size: got %v, expected one of %v", actualLength, validLengths)
 }
 
+// DeviceID is the ID of the device a client plays on.
 type DeviceID string
 
 // DeviceIDFormat describes the format of a DeviceID.

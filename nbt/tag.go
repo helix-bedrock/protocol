@@ -54,7 +54,7 @@ func (t tagType) String() string {
 	case tagInt64Array:
 		return "TAG_LongArray"
 	default:
-		panic("unknown tag")
+		return "TAG_Unknown"
 	}
 }
 

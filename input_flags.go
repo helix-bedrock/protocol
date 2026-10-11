@@ -33,31 +33,37 @@ func (f InputFlags) Present() bool {
 	return f.set
 }
 
-// Load returns whether the flag at index i is set. Indices beyond the size panic.
+// Load returns whether the flag at index i is set. Indices beyond the size are ignored.
 func (f InputFlags) Load(i int) bool {
 	if !f.set {
 		return false
 	}
-	f.check(i)
+	if !f.inRange(i) {
+		return false
+	}
 	return slices.Contains(f.ids, int32(i))
 }
 
 // Set sets the flag at index i and marks the InputFlags as present. Setting a flag that is already set does
-// nothing, as the flags sent must be unique. Indices beyond the size panic.
+// nothing, as the flags sent must be unique. Indices beyond the size are ignored.
 func (f *InputFlags) Set(i int) {
-	f.check(i)
+	if !f.inRange(i) {
+		return
+	}
 	f.set = true
 	if !slices.Contains(f.ids, int32(i)) {
 		f.ids = append(f.ids, int32(i))
 	}
 }
 
-// Unset unsets the flag at index i, doing nothing if the InputFlags is absent. Indices beyond the size panic.
+// Unset unsets the flag at index i, doing nothing if the InputFlags is absent. Indices beyond the size are ignored.
 func (f *InputFlags) Unset(i int) {
 	if !f.set {
 		return
 	}
-	f.check(i)
+	if !f.inRange(i) {
+		return
+	}
 	if at := slices.Index(f.ids, int32(i)); at != -1 {
 		f.ids = slices.Delete(f.ids, at, at+1)
 	}
@@ -68,10 +74,8 @@ func (f InputFlags) Len() int {
 	return f.size
 }
 
-func (f InputFlags) check(i int) {
-	if i < 0 || i >= f.size {
-		panic("index out of bounds")
-	}
+func (f InputFlags) inRange(i int) bool {
+	return i >= 0 && i < f.size
 }
 
 // InputFlagList reads/writes an InputFlags holding flags in the range [0, size) as a list of the IDs of the
