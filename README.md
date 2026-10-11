@@ -1,37 +1,31 @@
-<!-- TEMPLATE: replace everything in <angle brackets>, then delete this line. -->
+# protocol
 
-# <repo-name>
+The Minecraft: Bedrock Edition protocol for Helix: every packet, the binary
+reader and writer, NBT, login and (soon) connections and multi-version support.
 
-<One sentence: what this is and who it's for.>
-
-**Status:** <experimental | in development | stable>
+**Status:** in development
 
 Part of [Helix](https://github.com/helix-bedrock), an open-source Minecraft: Bedrock
 Edition server engine in Go.
 
-## Install
+## Packages
 
-```bash
-go get github.com/helix-bedrock/<repo-name>
-```
+| Package | What it has |
+|---|---|
+| `protocol` (root) | Reader and writer for every protocol type (the "io" layer) |
+| `packet` | Every packet, the pool, batch encoder/decoder, compression and encryption |
+| `login` | Login request parsing and client data |
+| `nbt` | Network and little-endian NBT |
+| `conn` | *Planned:* connections over Helix raknet and nethernet |
+| `version` | *Planned:* translating between protocol versions |
 
-## Example
+## Credits
 
-```go
-// <Smallest useful example.>
-```
-
-## Documentation
-
-API docs: <https://pkg.go.dev/github.com/helix-bedrock/<repo-name>>
-
-## Contributing
-
-See the [contributing guide](https://github.com/helix-bedrock/.github/blob/main/CONTRIBUTING.md).
-AI-assisted contributions follow the
-[AI policy](https://github.com/helix-bedrock/.github/blob/main/AI_POLICY.md).
+Imported from [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by **Sandertv**, using the fork by
+**HashimTheArab** at commit [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860). It is MIT licensed; the
+original license is in [`licenses/gophertunnel-LICENSE`](licenses/gophertunnel-LICENSE).
+Helix maintains this code from here on. See [CREDITS.md](CREDITS.md).
 
 ## License
 
-<MIT | GPL-3.0>. See [`LICENSE`](LICENSE). Ported code and its sources are listed
-in [`CREDITS.md`](CREDITS.md).
+MIT. See [LICENSE](LICENSE).
