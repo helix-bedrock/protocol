@@ -88,3 +88,33 @@ func TestVersionConversion(t *testing.T) {
 		t.Fatalf("server read %#v, want latest text from Alex", pk)
 	}
 }
+
+// cfb8Version is a made-up old version that uses CFB8 encryption and the old
+// batch format.
+type cfb8Version struct{ version.Protocol }
+
+func (cfb8Version) Encryption(key [32]byte) packet.Encryption { return packet.NewCFB8Encryption(key) }
+func (cfb8Version) LegacyNetworkSettings() packet.Compression { return packet.FlateCompression }
+
+func TestLegacyTransport(t *testing.T) {
+	old := cfb8Version{version.Latest}
+	a, b := memPair()
+	client := New(a, Config{Protocol: old, Pool: packet.NewServerPool()})
+	srv := New(b, Config{Protocol: old})
+	t.Cleanup(func() { _ = client.Close(); _ = srv.Close() })
+	for _, c := range []*Conn{client, srv} {
+		lp, ok := c.Protocol().(version.LegacyNetworkSettingsProtocol)
+		if !ok {
+			t.Fatal("protocol does not implement LegacyNetworkSettingsProtocol")
+		}
+		c.EnableLegacyCompression(lp.LegacyNetworkSettings())
+		c.EnableEncryption([32]byte{7})
+	}
+	send(t, client, msg("old client"))
+	send(t, client, msg("second"))
+	for _, want := range []string{"old client", "second"} {
+		if got := text(t, srv); got != want {
+			t.Fatalf("got %q, want %q", got, want)
+		}
+	}
+}

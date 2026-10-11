@@ -121,9 +121,27 @@ func (c *Conn) EnableCompression(alg packet.Compression, threshold int) {
 	c.dec.EnableCompression(alg, packet.DefaultMaxDecompressedLen)
 }
 
-// EnableEncryption encrypts every batch from now on with key. Transports that
-// disable encryption, like nethernet, ignore it.
+// EnableLegacyCompression switches to the batch format of versions before
+// RequestNetworkSettings: every batch is compressed with alg and carries no
+// compression byte. See version.LegacyNetworkSettingsProtocol.
+func (c *Conn) EnableLegacyCompression(alg packet.Compression) {
+	c.wmu.Lock()
+	c.enc.EnableLegacyCompression(alg)
+	c.wmu.Unlock()
+	c.dec.EnableLegacyCompression(alg, packet.DefaultMaxDecompressedLen)
+}
+
+// EnableEncryption encrypts every batch from now on with key, using the
+// version's own encryption if it implements version.EncryptionProtocol.
+// Transports that disable encryption, like nethernet, ignore it.
 func (c *Conn) EnableEncryption(key [32]byte) {
+	if p, ok := c.conf.Protocol.(version.EncryptionProtocol); ok {
+		c.wmu.Lock()
+		c.enc.EnableEncryptionWith(p.Encryption(key))
+		c.wmu.Unlock()
+		c.dec.EnableEncryptionWith(p.Encryption(key))
+		return
+	}
 	c.wmu.Lock()
 	c.enc.EnableEncryption(key)
 	c.wmu.Unlock()

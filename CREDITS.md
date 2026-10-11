@@ -9,3 +9,4 @@ Code in this repo that was ported from other projects, as required by the
 | `nbt/` | [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by Sandertv, fork by HashimTheArab | `minecraft/nbt/` | [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860) | MIT |
 | `internal/` | [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by Sandertv, fork by HashimTheArab | `minecraft/internal/` | [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860) | MIT |
 
+| `packet/encryption.go` (CFB8, `Encryption`), legacy batch format in `packet/encoder.go` and `packet/decoder.go`, skin patch fix in `login/request.go` | [gophertunnel fork](https://github.com/shawtymarco/gophertunnel) by shawtymarco | `minecraft/protocol/` | [`9e7f28092180`](https://github.com/shawtymarco/gophertunnel/commit/9e7f28092180) | MIT |

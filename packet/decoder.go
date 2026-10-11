@@ -2,8 +2,6 @@ package packet
 
 import (
 	"bytes"
-	"crypto/aes"
-	"crypto/cipher"
 	"fmt"
 	"io"
 	"math"
@@ -27,8 +25,9 @@ type Decoder struct {
 
 	decompress         bool
 	compression        Compression
+	legacyCompression  bool
 	maxDecompressedLen int
-	encrypt            *encrypt
+	encrypt            Encryption
 	// disableEncryption indicates whether to prevent encryption from being enabled
 	// even if it is requested on handshake during login.
 	disableEncryption bool
@@ -74,10 +73,15 @@ func (decoder *Decoder) EnableEncryption(keyBytes [32]byte) {
 	if decoder.disableEncryption {
 		return
 	}
-	block, _ := aes.NewCipher(keyBytes[:])
-	first12 := append([]byte(nil), keyBytes[:12]...)
-	stream := cipher.NewCTR(block, append(first12, 0, 0, 0, 2))
-	decoder.encrypt = newEncrypt(keyBytes[:], stream)
+	decoder.encrypt = NewCTREncryption(keyBytes)
+}
+
+// EnableEncryptionWith enables decryption using a protocol-specific encryption implementation.
+func (decoder *Decoder) EnableEncryptionWith(encryption Encryption) {
+	if decoder.disableEncryption {
+		return
+	}
+	decoder.encrypt = encryption
 }
 
 // EnableCompression enables compression for the Decoder. A maxDecompressedLen of 0 uses
@@ -85,12 +89,21 @@ func (decoder *Decoder) EnableEncryption(keyBytes [32]byte) {
 func (decoder *Decoder) EnableCompression(compression Compression, maxDecompressedLen int) {
 	decoder.decompress = true
 	decoder.compression = compression
+	decoder.legacyCompression = false
 	if maxDecompressedLen == 0 {
 		maxDecompressedLen = DefaultMaxDecompressedLen
 	} else if maxDecompressedLen < 0 {
 		maxDecompressedLen = math.MaxInt
 	}
 	decoder.maxDecompressedLen = maxDecompressedLen
+}
+
+// EnableLegacyCompression enables the pre-NetworkSettings batch format used
+// by RakNet v10 clients. Batches contain no compression algorithm byte. The
+// decompression limit follows the same rules as EnableCompression.
+func (decoder *Decoder) EnableLegacyCompression(compression Compression, maxDecompressedLen int) {
+	decoder.EnableCompression(compression, maxDecompressedLen)
+	decoder.legacyCompression = true
 }
 
 // DisableBatchPacketLimit disables the check that limits the number of packets allowed in a single packet
@@ -185,8 +198,8 @@ func (decoder *Decoder) readBatch() (data []byte, pooled *[]byte, err error) {
 	data = data[len(decoder.header):]
 
 	if decoder.encrypt != nil {
-		decoder.encrypt.decrypt(data)
-		if err := decoder.encrypt.verify(data); err != nil {
+		decoder.encrypt.Decrypt(data)
+		if err := decoder.encrypt.Verify(data); err != nil {
 			// The packet did not have a correct checksum.
 			return nil, nil, fmt.Errorf("verify batch: %w", err)
 		}
@@ -194,22 +207,29 @@ func (decoder *Decoder) readBatch() (data []byte, pooled *[]byte, err error) {
 	}
 
 	if decoder.decompress {
-		if len(data) == 0 {
-			return nil, nil, fmt.Errorf("decompress batch: missing compression algorithm")
-		}
-		if data[0] == 0xff {
-			data = data[1:]
-		} else {
-			compression, ok := CompressionByID(uint16(data[0]))
-			if !ok {
-				return nil, nil, fmt.Errorf("decompress batch: unknown compression algorithm %v", data[0])
-			}
-			if compression != decoder.compression {
-				return nil, nil, fmt.Errorf("decompress batch: unexpected compression algorithm: got %v, expected %v", compression, decoder.compression)
-			}
-			data, pooled, err = decoder.decompressBatch(compression, data[1:])
+		if decoder.legacyCompression {
+			data, pooled, err = decoder.decompressBatch(decoder.compression, data)
 			if err != nil {
-				return nil, pooled, fmt.Errorf("decompress batch: %w", err)
+				return nil, pooled, fmt.Errorf("decompress legacy batch: %w", err)
+			}
+		} else {
+			if len(data) == 0 {
+				return nil, nil, fmt.Errorf("decompress batch: missing compression algorithm")
+			}
+			if data[0] == 0xff {
+				data = data[1:]
+			} else {
+				compression, ok := CompressionByID(uint16(data[0]))
+				if !ok {
+					return nil, nil, fmt.Errorf("decompress batch: unknown compression algorithm %v", data[0])
+				}
+				if compression != decoder.compression {
+					return nil, nil, fmt.Errorf("decompress batch: unexpected compression algorithm: got %v, expected %v", compression, decoder.compression)
+				}
+				data, pooled, err = decoder.decompressBatch(compression, data[1:])
+				if err != nil {
+					return nil, pooled, fmt.Errorf("decompress batch: %w", err)
+				}
 			}
 		}
 	}
