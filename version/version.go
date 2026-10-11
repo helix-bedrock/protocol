@@ -70,6 +70,28 @@ type Protocol interface {
 	ConvertFromLatest(pk packet.Packet, s Session) []packet.Packet
 }
 
+// LegacyNetworkSettingsProtocol is implemented by versions from before the
+// RequestNetworkSettings exchange (1.19.30 and older). Their first packet is
+// Login and every batch is compressed with the returned compression, with no
+// compression byte. Use conn.Conn.EnableLegacyCompression.
+type LegacyNetworkSettingsProtocol interface {
+	LegacyNetworkSettings() packet.Compression
+}
+
+// EncryptionProtocol is implemented by versions that encrypt differently
+// from the current CTR mode, such as CFB8 before 1.16.220. Encryption is
+// called once per direction, as each direction keeps its own counter.
+type EncryptionProtocol interface {
+	Encryption(key [32]byte) packet.Encryption
+}
+
+// PreSpawnPacketsProtocol is implemented by versions that need extra packets
+// after ChunkRadiusUpdated and before the spawn PlayStatus. The packets are
+// latest packets; the server writes them and conn converts them.
+type PreSpawnPacketsProtocol interface {
+	PreSpawnPackets() []packet.Packet
+}
+
 // Latest is the version the packet package implements. It converts nothing.
 var Latest Protocol = latest{}
 
