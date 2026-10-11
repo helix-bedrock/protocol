@@ -1,5 +1,3 @@
-<!-- TEMPLATE: fill in each section for this repo, then delete this line. -->
-
 # AGENTS.md
 
 Rules for AI coding agents working in this repo. Also read the org-wide rules in
@@ -9,7 +7,9 @@ disagree, this file wins for this repo.
 
 ## What this repo is
 
-<What it does, what it does not do, and who uses it.>
+The Minecraft: Bedrock Edition protocol for Helix: packets, the binary reader
+and writer, NBT, login, and later connections and multi-version support. It does
+not contain any transport; Helix raknet and nethernet carry its bytes.
 
 ## Commands
 
@@ -18,22 +18,24 @@ go build ./...
 go vet ./...
 golangci-lint run
 go test -race ./...
-go test -run=^$ -bench=. -benchmem ./...   # benchmarks
 ```
 
 ## Layout
 
-<Main packages and what each one owns.>
+- Root package: `Reader`/`Writer` and every shared protocol type (the "io" layer).
+- `packet`: every packet, the pool, batch encoder/decoder, compression, encryption.
+- `login`: login request parsing and client data.
+- `nbt`: NBT encoding.
+- `internal`: small shared helpers.
 
 ## Invariants: do not break these
 
-<!-- Things that must stay true. Examples:
-1. This package never imports the engine.
-2. Decoding never allocates more than the input size.
-3. The on-disk format matches BDS byte for byte. -->
-
-1. <...>
+1. Bytes on the wire match vanilla Bedrock exactly.
+2. Login uses `AuthenticationType` + `Token`; the old certificate chain is only
+   accepted when explicitly enabled.
+3. The original copyright line in `LICENSE` stays.
+4. Never panic (see the org rules), including on malformed packets.
 
 ## Gotchas
 
-<Non-obvious traps: generated files, test data, platform quirks.>
+- Imported from gophertunnel (Hashim's fork); see `CREDITS.md`.
