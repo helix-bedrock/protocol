@@ -74,6 +74,7 @@ type Conn struct {
 
 	identity atomic.Pointer[login.IdentityData]
 	client   atomic.Pointer[login.ClientData]
+	game     atomic.Pointer[version.GameData]
 
 	wmu    sync.Mutex
 	enc    *packet.Encoder
@@ -192,6 +193,20 @@ func (c *Conn) Protocol() version.Protocol { return c.conf.Protocol }
 func (c *Conn) SetLoginData(id login.IdentityData, cd login.ClientData) {
 	c.identity.Store(&id)
 	c.client.Store(&cd)
+}
+
+// SetGameData stores the game data sent to the player in StartGame, which
+// version conversions may need. The server calls it when the player joins.
+func (c *Conn) SetGameData(d version.GameData) {
+	c.game.Store(&d)
+}
+
+// GameData returns the data set with SetGameData, or zero values.
+func (c *Conn) GameData() version.GameData {
+	if p := c.game.Load(); p != nil {
+		return *p
+	}
+	return version.GameData{}
 }
 
 // IdentityData returns the data set with SetLoginData, or zero values.

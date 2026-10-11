@@ -3,6 +3,7 @@ package conn
 import (
 	"testing"
 
+	"github.com/helix-bedrock/protocol"
 	"github.com/helix-bedrock/protocol/packet"
 	"github.com/helix-bedrock/protocol/version"
 )
@@ -54,6 +55,10 @@ func TestVersionConversion(t *testing.T) {
 	id := srv.IdentityData()
 	id.DisplayName = "Alex"
 	srv.SetLoginData(id, srv.ClientData())
+	srv.SetGameData(version.GameData{Items: []protocol.ItemEntry{{Name: "minecraft:stone", RuntimeID: 1}}})
+	if got := srv.GameData().Items; len(got) != 1 || got[0].Name != "minecraft:stone" {
+		t.Fatalf("GameData().Items = %v", got)
+	}
 
 	// Server writes one latest packet; the client sees two old ones.
 	send(t, srv, msg("hi"))
