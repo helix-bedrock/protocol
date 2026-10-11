@@ -38,6 +38,15 @@ type Session interface {
 	ClientData() login.ClientData
 	// IdentityData is the identity the player logged in with.
 	IdentityData() login.IdentityData
+	// GameData is the game data sent to the player when it joined.
+	GameData() GameData
+}
+
+// GameData is the part of the StartGame data that conversions need. Fields
+// are added as adapters need them.
+type GameData struct {
+	// Items is every item the server registered, with its runtime ID.
+	Items []protocol.ItemEntry
 }
 
 // Protocol is one Minecraft protocol version.
