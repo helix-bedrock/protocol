@@ -635,15 +635,14 @@ func (r *Reader) ShapeData(x *ShapeData) {
 }
 
 // SliceLength validates a length prefix before a slice is allocated.
-// It returns false if the slice must not be allocated.
-func (r *Reader) SliceLength(value uint32, max uint32) bool {
+// On failure Err returns the error and the slice must not be allocated.
+func (r *Reader) SliceLength(value uint32, max uint32) {
 	if value > max && r.limitsEnabled {
 		r.failf("slice length was too long: length of %v (max %v)", value, max)
 	}
 	if remaining, ok := r.r.(interface{ Len() int }); ok && uint64(value) > uint64(remaining.Len()) {
 		r.failf("slice length %v exceeds remaining packet payload %v", value, remaining.Len())
 	}
-	return r.err == nil
 }
 
 // checkRemaining checks that a field's declared length fits within the remaining packet payload.
