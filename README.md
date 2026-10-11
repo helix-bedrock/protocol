@@ -16,7 +16,7 @@ Edition server engine in Go.
 | `packet` | Every packet, the pool, batch encoder/decoder, compression and encryption |
 | `login` | Login request parsing and client data |
 | `nbt` | Network and little-endian NBT |
-| `conn` | *Planned:* connections over Helix raknet and nethernet |
+| `conn` | Packet connections over Helix raknet and nethernet: batching, compression, encryption, hooks |
 | `version` | *Planned:* translating between protocol versions |
 
 ## Credits

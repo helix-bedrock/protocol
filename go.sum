@@ -6,6 +6,8 @@ github.com/go-jose/go-jose/v4 v4.1.5 h1:RjgjO2LOtWOJKUC5wpwY9LR3B3vwVAz6JS2YHfYU
 github.com/go-jose/go-jose/v4 v4.1.5/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
 github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
 github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/helix-bedrock/raknet v0.0.0-20261011185733-0d441ae6e71a h1:W+QRwehZQCPHA+uuuBWtF5Y5Bpaey5lli4o1sAQudd0=
+github.com/helix-bedrock/raknet v0.0.0-20261011185733-0d441ae6e71a/go.mod h1:yQ1PGHcnA4woFMDY+OWLn49Rwp81/oZzcceMTNYCRms=
 github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
 github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
 golang.org/x/exp v0.0.0-20261011100332-faecfb24eb49 h1:pQo5TwmxKJvI8k39uYS2Gqkk8OXWxX/TMSis2Twp1AQ=

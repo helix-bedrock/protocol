@@ -26,7 +26,8 @@ go test -race ./...
 - `packet`: every packet, the pool, batch encoder/decoder, compression, encryption.
 - `login`: login request parsing and client data.
 - `nbt`: NBT encoding.
-- `internal`: small shared helpers.
+- `conn`: packet connections over a transport (batching, compression, encryption, hooks).
+- `internal`: small shared helpers; `internal/hook` is the hook list.
 
 ## Invariants: do not break these
 
