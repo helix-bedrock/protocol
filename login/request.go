@@ -115,6 +115,10 @@ type Config struct {
 // chain and Config.AllowLegacyChain is false.
 var ErrLegacyChain = errors.New("login request uses the legacy certificate chain, which is not allowed")
 
+// ErrIdentityMismatch is returned when a request carries both a verified
+// token and a verified certificate chain for different Xbox accounts.
+var ErrIdentityMismatch = errors.New("login request token and certificate chain name different players")
+
 // Parse parses and verifies the login request passed. The AuthResult returned holds the ecdsa.PublicKey that
 // was parsed (which is used for encryption) and a bool specifying if the request was authenticated by XBOX
 // Live.
@@ -178,7 +182,13 @@ func ParseWithConfig(request []byte, conf Config) (IdentityData, ClientData, Aut
 		// can keep using IdentityData.TitleID.
 		if authenticated && len(req.Certificate.Chain) > 0 {
 			if legacyID, _, legacyAuthed, err := parseLegacyChain(req.Certificate.Chain, t); err == nil && legacyAuthed {
-				if legacyID.TitleID != "" && legacyID.XUID == iData.XUID {
+				// Both forms are signed by Microsoft; if they name
+				// different accounts, the request was put together from
+				// two logins and is refused.
+				if legacyID.XUID != iData.XUID {
+					return iData, cData, res, fmt.Errorf("%w: token XUID %q, chain XUID %q", ErrIdentityMismatch, iData.XUID, legacyID.XUID)
+				}
+				if legacyID.TitleID != "" {
 					iData.TitleID = legacyID.TitleID
 				}
 			}
