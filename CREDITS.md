@@ -6,6 +6,7 @@ Code in this repo that was ported from other projects, as required by the
 | Helix path | Source project | Source path | Commit | License |
 |---|---|---|---|---|
 | `*.go` (root), `packet/`, `login/` | [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by Sandertv, fork by HashimTheArab | `minecraft/protocol/` | [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860) | MIT |
+| `auth/` (discovery, OpenID verifier, refreshing key set, hex `x5t` fix) | [gophertunnel](https://github.com/Sandertv/gophertunnel) by Sandertv | `minecraft/service/discovery.go`, `minecraft/service/jwks.go`, `minecraft/service/token.go`, `minecraft/listener.go` | `v1.62.0` | MIT |
 | `nbt/` | [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by Sandertv, fork by HashimTheArab | `minecraft/nbt/` | [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860) | MIT |
 | `internal/` | [gophertunnel](https://github.com/HashimTheArab/gophertunnel) by Sandertv, fork by HashimTheArab | `minecraft/internal/` | [`80c811b61860`](https://github.com/HashimTheArab/gophertunnel/commit/80c811b61860) | MIT |
 
