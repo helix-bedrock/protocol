@@ -40,7 +40,7 @@ func (x *DebugMarkerData) Marshal(io protocol.IO) {
 	io.String(&x.Text)
 	io.Vec3(&x.Position)
 	io.BEARGB(&x.Colour)
-	io.Uint64(&x.Duration)
+	io.Varuint64(&x.Duration)
 }
 
 // ID ...

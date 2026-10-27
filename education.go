@@ -28,3 +28,14 @@ func (x *EducationExternalLinkSettings) Marshal(r IO) {
 	r.String(&x.URL)
 	r.String(&x.DisplayName)
 }
+
+// EducationAgentCapabilities holds what the Code Builder agent is allowed to do.
+type EducationAgentCapabilities struct {
+	// CanModifyBlocks specifies if the agent may modify blocks.
+	CanModifyBlocks Optional[bool]
+}
+
+// Marshal encodes/decodes an EducationAgentCapabilities.
+func (x *EducationAgentCapabilities) Marshal(r IO) {
+	OptionalFunc(r, &x.CanModifyBlocks, r.Bool)
+}
