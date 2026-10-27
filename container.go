@@ -68,6 +68,10 @@ const (
 	ContainerRecipeFood
 	ContainerRecipeBlocks
 	ContainerRecipeFurnaceItems
+	ContainerReservedA
+	ContainerReservedB
+	ContainerReservedC
+	ContainerReservedD
 )
 
 const (
@@ -109,6 +113,8 @@ const (
 	ContainerTypeChestBoat
 	ContainerTypeDecoratedPot
 	ContainerTypeCrafter
+	// ContainerTypeReserved is reserved by BDS for a container type that is not used yet.
+	ContainerTypeReserved = 38
 )
 
 // FullContainerName contains information required to identify a container in a StackRequestSlotInfo.

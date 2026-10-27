@@ -1,5 +1,7 @@
 package protocol
 
+import "github.com/go-gl/mathgl/mgl32"
+
 const (
 	// EntityLinkRemove is set to remove the link between two entities.
 	EntityLinkRemove = iota
@@ -39,4 +41,34 @@ func (x *EntityLink) Marshal(r IO) {
 	r.Bool(&x.Immediate)
 	r.Bool(&x.RiderInitiated)
 	r.Float32(&x.VehicleAngularVelocity)
+}
+
+const (
+	PassengerOfBlockEmoteStanding = iota
+	PassengerOfBlockEmoteRiding
+	PassengerOfBlockEmoteLaying
+)
+
+// PassengerOfBlockData places an entity on a block as its passenger, for example a player sitting on a
+// block.
+type PassengerOfBlockData struct {
+	// BlockPosition is the position of the block the entity is a passenger of.
+	BlockPosition BlockPos
+	// Offset is the offset of the entity from the block.
+	Offset mgl32.Vec3
+	// Rotation is the rotation of the entity on the block.
+	Rotation float32
+	// RotationLimit limits how far the entity may rotate from Rotation.
+	RotationLimit float32
+	// EmoteType is the pose of the entity. It is one of the PassengerOfBlockEmote constants above.
+	EmoteType uint8
+}
+
+// Marshal encodes/decodes a PassengerOfBlockData.
+func (x *PassengerOfBlockData) Marshal(r IO) {
+	r.BlockPos(&x.BlockPosition)
+	r.Vec3(&x.Offset)
+	r.Float32(&x.Rotation)
+	r.Float32(&x.RotationLimit)
+	r.Uint8(&x.EmoteType)
 }

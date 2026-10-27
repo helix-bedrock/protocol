@@ -86,6 +86,8 @@ func lookupStackRequestActionType(x StackRequestAction, id *uint8) bool {
 		*id = StackRequestActionCraftGrindstone
 	case *CraftLoomRecipeStackRequestAction:
 		*id = StackRequestActionCraftLoom
+	case *CraftDiscPressRecipeStackRequestAction:
+		*id = StackRequestActionCraftDiscPress
 	case *CraftNonImplementedStackRequestAction:
 		*id = StackRequestActionCraftNonImplementedDeprecated
 	case *CraftResultsDeprecatedStackRequestAction:
@@ -131,6 +133,8 @@ func lookupStackRequestAction(id uint8, x *StackRequestAction) bool {
 		*x = &CraftGrindstoneRecipeStackRequestAction{}
 	case StackRequestActionCraftLoom:
 		*x = &CraftLoomRecipeStackRequestAction{}
+	case StackRequestActionCraftDiscPress:
+		*x = &CraftDiscPressRecipeStackRequestAction{}
 	case StackRequestActionCraftNonImplementedDeprecated:
 		*x = &CraftNonImplementedStackRequestAction{}
 	case StackRequestActionCraftResultsDeprecated:
@@ -326,6 +330,7 @@ const (
 	StackRequestActionCraftRecipeOptional
 	StackRequestActionCraftGrindstone
 	StackRequestActionCraftLoom
+	StackRequestActionCraftDiscPress
 	StackRequestActionCraftNonImplementedDeprecated
 	StackRequestActionCraftResultsDeprecated
 )
@@ -545,7 +550,7 @@ type CraftRecipeOptionalStackRequestAction struct {
 // Marshal ...
 func (c *CraftRecipeOptionalStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&c.RecipeNetworkID)
-	r.Int32(&c.FilterStringIndex)
+	r.Varint32(&c.FilterStringIndex)
 }
 
 // CraftGrindstoneRecipeStackRequestAction is sent when a grindstone recipe is crafted. It contains the RecipeNetworkID
@@ -581,6 +586,20 @@ type CraftLoomRecipeStackRequestAction struct {
 // Marshal ...
 func (c *CraftLoomRecipeStackRequestAction) Marshal(r IO) {
 	r.String(&c.Pattern)
+	r.Uint8(&c.TimesCrafted)
+}
+
+// CraftDiscPressRecipeStackRequestAction is sent when a disc press recipe is crafted.
+type CraftDiscPressRecipeStackRequestAction struct {
+	// ReservedID is the identifier BDS calls "Reserved Id". Its use is not known yet.
+	ReservedID string
+	// TimesCrafted is how many times the recipe was crafted.
+	TimesCrafted byte
+}
+
+// Marshal ...
+func (c *CraftDiscPressRecipeStackRequestAction) Marshal(r IO) {
+	r.String(&c.ReservedID)
 	r.Uint8(&c.TimesCrafted)
 }
 
