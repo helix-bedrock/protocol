@@ -39,6 +39,9 @@ type Config struct {
 	Pool packet.Pool
 	// ShieldID is the item runtime ID of the shield, needed to decode items.
 	ShieldID int32
+	// MaxBatchSize is the largest decompressed batch accepted. If 0,
+	// packet.DefaultMaxDecompressedLen. BDS 1.26.60 allows 10 MiB.
+	MaxBatchSize int
 	// DisableLimits turns off the slice length limits when decoding packets.
 	DisableLimits bool
 	// FlushInterval sends buffered packets this often. If zero, packets are
@@ -103,6 +106,14 @@ func New(t Transport, conf Config) *Conn {
 	return c
 }
 
+// maxBatch returns the decompressed batch size limit.
+func (c *Conn) maxBatch() int {
+	if c.conf.MaxBatchSize > 0 {
+		return c.conf.MaxBatchSize
+	}
+	return packet.DefaultMaxDecompressedLen
+}
+
 // Transport returns the underlying transport.
 func (c *Conn) Transport() Transport { return c.t }
 
@@ -118,7 +129,7 @@ func (c *Conn) EnableCompression(alg packet.Compression, threshold int) {
 	c.wmu.Lock()
 	c.enc.EnableCompression(alg, threshold)
 	c.wmu.Unlock()
-	c.dec.EnableCompression(alg, packet.DefaultMaxDecompressedLen)
+	c.dec.EnableCompression(alg, c.maxBatch())
 }
 
 // EnableLegacyCompression switches to the batch format of versions before
@@ -128,7 +139,7 @@ func (c *Conn) EnableLegacyCompression(alg packet.Compression) {
 	c.wmu.Lock()
 	c.enc.EnableLegacyCompression(alg)
 	c.wmu.Unlock()
-	c.dec.EnableLegacyCompression(alg, packet.DefaultMaxDecompressedLen)
+	c.dec.EnableLegacyCompression(alg, c.maxBatch())
 }
 
 // EnableEncryption encrypts every batch from now on with key, using the
