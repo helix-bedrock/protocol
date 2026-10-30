@@ -2,7 +2,6 @@ package login
 
 import (
 	"bytes"
-	"context"
 	"crypto/ecdsa"
 	"crypto/md5" //nolint:gosec // see identityFromXUID
 	"crypto/x509"
@@ -14,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/go-jose/go-jose/v4"
 	"github.com/go-jose/go-jose/v4/jwt"
 	"github.com/google/uuid"
@@ -101,11 +99,19 @@ const (
 	MethodLegacyChain
 )
 
+// TokenVerifier verifies a multiplayer token, its signature and time claims
+// included, and returns its JSON payload.
+// *auth.Service implements it.
+type TokenVerifier interface {
+	Verify(token string) ([]byte, error)
+}
+
 // Config controls how ParseWithConfig verifies a login request.
 type Config struct {
-	// Verifier verifies the multiplayer token. If nil, the token is read
-	// without verification (offline mode) and XBOXLiveAuthenticated is false.
-	Verifier *oidc.IDTokenVerifier
+	// Verifier verifies the multiplayer token. If nil,
+	// the token is read without verification (offline mode) and
+	// XBOXLiveAuthenticated is false.
+	Verifier TokenVerifier
 	// AllowLegacyChain accepts requests that only carry the old certificate
 	// chain. It is off by default: current clients always send a token.
 	AllowLegacyChain bool
@@ -129,7 +135,7 @@ var ErrIdentityMismatch = errors.New("login request token and certificate chain 
 //
 // Parse accepts the legacy certificate chain, like gophertunnel. Helix code
 // should use ParseWithConfig, which refuses it by default.
-func Parse(request []byte, verifier *oidc.IDTokenVerifier) (IdentityData, ClientData, AuthResult, error) {
+func Parse(request []byte, verifier TokenVerifier) (IdentityData, ClientData, AuthResult, error) {
 	return ParseWithConfig(request, Config{Verifier: verifier, AllowLegacyChain: true})
 }
 
@@ -159,18 +165,15 @@ func ParseWithConfig(request []byte, conf Config) (IdentityData, ClientData, Aut
 	}
 	switch {
 	case verifier != nil && req.Token != "":
-		// The context here is used for making requests via remote key set, which does not normally
-		// occur in this case since we use a custom-made OIDC verifier that has already static key set included.
-		idt, err := verifier.Verify(context.Background(), req.Token)
+		payload, err := verifier.Verify(req.Token)
 		if err != nil {
-			return iData, cData, res, fmt.Errorf("verify ID token: %w", err)
+			return iData, cData, res, fmt.Errorf("verify token: %w", err)
 		}
+		// The verifier checked expiry as BDS does; BDS does not check nbf
+		// or iat, so the claims are not validated again here.
 		var claims tokenClaims
-		if err := idt.Claims(&claims); err != nil {
-			return iData, cData, res, fmt.Errorf("parse ID token: %w", err)
-		}
-		if err := claims.Validate(jwt.Expected{Time: t}); err != nil {
-			return iData, cData, res, fmt.Errorf("validate ID token: %w", err)
+		if err := json.Unmarshal(payload, &claims); err != nil {
+			return iData, cData, res, fmt.Errorf("parse token claims: %w", err)
 		}
 		if err := ParsePublicKey(claims.ClientPublicKey, key); err != nil {
 			return iData, cData, res, fmt.Errorf("parse cpk: %w", err)
