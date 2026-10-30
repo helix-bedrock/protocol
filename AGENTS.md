@@ -24,7 +24,7 @@ go test -race ./...
 
 - Root package: `Reader`/`Writer` and every shared protocol type (the "io" layer).
 - `packet`: every packet, the pool, batch encoder/decoder, compression, encryption.
-- `login`: login request parsing and client data.
+- `login`: login request parsing, client data, and the server handshake token (as BDS makes it).
 - `auth`: verifies multiplayer tokens the way BDS does (discovery as a dedicated server, OpenID configuration, key set, clock corrected from Microsoft's Date header), plus nbf/iat checks BDS does not do.
 - `nbt`: NBT encoding.
 - `conn`: packet connections over a transport (batching, compression, encryption, hooks).
