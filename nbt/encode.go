@@ -5,6 +5,7 @@ import (
 	"io"
 	"math"
 	"reflect"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -241,9 +242,13 @@ func (e *Encoder) encode(val reflect.Value, tagName string) error {
 		if val.Type().Key().Kind() != reflect.String {
 			return IncompatibleTypeError{Type: val.Type(), ValueName: tagName}
 		}
-		iter := val.MapRange()
-		for iter.Next() {
-			if err := e.marshal(iter.Value(), iter.Key().String()); err != nil {
+		// Keys are written sorted: Bedrock's compounds are ordered maps, so
+		// this gives the same bytes BDS writes, and the same bytes on every
+		// call (BDS hashes some compounds).
+		keys := val.MapKeys()
+		slices.SortFunc(keys, func(a, b reflect.Value) int { return strings.Compare(a.String(), b.String()) })
+		for _, k := range keys {
+			if err := e.marshal(val.MapIndex(k), k.String()); err != nil {
 				return err
 			}
 		}

@@ -3,7 +3,7 @@
 The Minecraft: Bedrock Edition protocol for Helix: every packet, the binary
 reader and writer, NBT, login and (soon) connections and multi-version support.
 
-**Status as of 2026-10-29:** in development. `auth` verifies login tokens the way BDS 1.26.60 does, with the clock corrected from Microsoft's servers.
+**Status as of 2026-10-29:** in development. `auth` verifies login tokens the way BDS 1.26.60 does, with the clock corrected from Microsoft's servers; NBT compounds are written with sorted keys, as BDS writes them.
 
 Part of [Helix](https://github.com/helix-bedrock), an open-source Minecraft: Bedrock
 Edition server engine in Go.
