@@ -11,24 +11,9 @@
 [![Protocol](https://img.shields.io/badge/protocol-2225-black)](info.go)
 [![Go](https://img.shields.io/badge/go-1.26-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Status](https://img.shields.io/badge/status-in_development-orange)](#status)
+[![Status](https://img.shields.io/badge/status-in_development-orange)](STATUS.md)
 
 </div>
-
-## Status
-
-Status as of 2026-10-31: **in development**, at protocol 2225 (Minecraft 1.26.60).
-
-- `login` turns client data into the skin other players are sent.
-- `auth` verifies login tokens the way BDS 1.26.60 does, with the clock corrected from Microsoft's
-  servers.
-- NBT compounds are written with sorted keys, as BDS writes them.
-
-What is left:
-
-- **Multi-version support:** the `version` package has the interface; the adapters for older
-  versions live in their own repo.
-- **The API is not stable yet.** Names and behaviour may still change between commits.
 
 ## How it is checked
 
@@ -62,6 +47,8 @@ go get github.com/helix-bedrock/protocol
 | [`version`](version) | The `Protocol` interface for older Minecraft versions, `Latest`, and `Set`. Adapters live in their own repo |
 
 ## Roadmap
+
+What works today and what is left is in [STATUS.md](STATUS.md).
 
 | Part | State |
 |---|---|
