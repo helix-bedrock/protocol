@@ -112,7 +112,7 @@ func (x *PlayerListEntry) Marshal(r IO) {
 	r.Bool(&x.Teacher)
 	r.Bool(&x.Host)
 	r.Bool(&x.SubClient)
-	r.BEARGB(&x.PlayerColour)
+	r.ARGB(&x.PlayerColour)
 }
 
 func playerListAction(r IO, action *byte) {

@@ -129,7 +129,7 @@ type TextShape struct {
 func (shape *TextShape) Marshal(io IO) {
 	io.String(&shape.Text)
 	io.Bool(&shape.UseRotation)
-	OptionalFunc(io, &shape.BackgroundColour, io.BEARGB)
+	OptionalFunc(io, &shape.BackgroundColour, io.ARGB)
 	io.Float32(&shape.LineGapHeight)
 	io.Bool(&shape.DepthTest)
 	io.Bool(&shape.ShowBackface)
@@ -297,7 +297,7 @@ func (x *PrimitiveShape) Marshal(io IO) {
 	OptionalFunc(io, &x.Rotation, io.Vec3)
 	OptionalFunc(io, &x.TotalTimeLeft, io.Float32)
 	OptionalFunc(io, &x.MaxRenderDistance, io.Float32)
-	OptionalFunc(io, &x.Colour, io.BEARGB)
+	OptionalFunc(io, &x.Colour, io.ARGB)
 	OptionalFunc(io, &x.DimensionID, io.Varint32)
 	OptionalFunc(io, &x.AttachedToEntityID, io.ActorUniqueID)
 	io.ShapeData(&x.ExtraShapeData)

@@ -204,15 +204,16 @@ func (r *Reader) RGBA(x *color.RGBA) {
 	}
 }
 
-// BEARGB reads a color.ARGB x from a big endian int32.
-func (r *Reader) BEARGB(x *color.RGBA) {
-	var v int32
-	r.BEInt32(&v)
+// ARGB reads a color.RGBA x from an ARGB value in a little endian int32, as BDS sends a
+// mce::Color.
+func (r *Reader) ARGB(x *color.RGBA) {
+	var v uint32
+	r.Uint32(&v)
 	*x = color.RGBA{
-		A: byte(v),
-		R: byte(v >> 8),
-		G: byte(v >> 16),
-		B: byte(v >> 24),
+		A: byte(v >> 24),
+		R: byte(v >> 16),
+		G: byte(v >> 8),
+		B: byte(v),
 	}
 }
 

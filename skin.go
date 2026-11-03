@@ -94,7 +94,7 @@ func (x *Skin) Marshal(r IO) {
 	r.String(&x.CapeID)
 	r.String(&x.FullID)
 	r.Uint8(&x.ArmSize)
-	r.BEARGB(&x.SkinColour)
+	r.ARGB(&x.SkinColour)
 	Slice(r, &x.PersonaPieces)
 	Slice(r, &x.PieceTintColours)
 	if err := x.validate(); err != nil {
@@ -249,7 +249,7 @@ func (x *PersonaPieceTintColour) Marshal(r IO) {
 		x.PieceType = personaPieceTintLoginType(wireType)
 	}
 	for i := range x.Colours {
-		r.BEARGB(&x.Colours[i])
+		r.ARGB(&x.Colours[i])
 	}
 }
 

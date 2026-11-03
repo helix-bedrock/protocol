@@ -55,7 +55,7 @@ type IO interface {
 	UUID(x *uuid.UUID)
 	RGB(x *color.RGBA)
 	RGBA(x *color.RGBA)
-	BEARGB(x *color.RGBA)
+	ARGB(x *color.RGBA)
 	EntityMetadata(x *EntityMetadata)
 	Item(x *ItemStack)
 	ItemInstance(i *ItemInstance)
