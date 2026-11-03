@@ -3,8 +3,8 @@ package packet
 import "github.com/helix-bedrock/protocol"
 
 const (
-	AudioContentPlaybackMusic = iota
-	AudioContentPlaybackSound
+	AudioContentPlaybackMusic = "Music"
+	AudioContentPlaybackSound = "Sound"
 )
 
 // ClientboundPlayAudioContent is sent by the server to play registered audio content. The metadata and
@@ -15,7 +15,7 @@ type ClientboundPlayAudioContent struct {
 	// PlaybackContent is the signed content used for playback.
 	PlaybackContent string
 	// PlaybackType is how the content is played. It is one of the AudioContentPlayback constants above.
-	PlaybackType uint8
+	PlaybackType string
 	// Sound holds the same fields as a PlaySound packet: where and how the content is played.
 	Sound PlaySound
 }
@@ -28,6 +28,6 @@ func (*ClientboundPlayAudioContent) ID() uint32 {
 func (pk *ClientboundPlayAudioContent) Marshal(io protocol.IO) {
 	io.String(&pk.SharedMetadata)
 	io.String(&pk.PlaybackContent)
-	io.Uint8(&pk.PlaybackType)
+	io.String(&pk.PlaybackType)
 	pk.Sound.Marshal(io)
 }

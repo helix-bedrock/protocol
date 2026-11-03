@@ -550,8 +550,8 @@ type CraftRecipeOptionalStackRequestAction struct {
 // Marshal ...
 func (c *CraftRecipeOptionalStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&c.RecipeNetworkID)
-	// BDS's reflection data calls this a varint, but its own reader and writer for the
-	// action use four bytes, and that is what the client sends.
+	// Four fixed bytes, as in BDS's reflection data and its reader and writer. An older
+	// dump called this a varint only because of a bds-packet-dumper bug, since fixed.
 	r.Int32(&c.FilterStringIndex)
 }
 
