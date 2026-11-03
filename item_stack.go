@@ -550,7 +550,9 @@ type CraftRecipeOptionalStackRequestAction struct {
 // Marshal ...
 func (c *CraftRecipeOptionalStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&c.RecipeNetworkID)
-	r.Varint32(&c.FilterStringIndex)
+	// BDS's reflection data calls this a varint, but its own reader and writer for the
+	// action use four bytes, and that is what the client sends.
+	r.Int32(&c.FilterStringIndex)
 }
 
 // CraftGrindstoneRecipeStackRequestAction is sent when a grindstone recipe is crafted. It contains the RecipeNetworkID

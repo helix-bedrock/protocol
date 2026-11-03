@@ -1,6 +1,6 @@
 # What protocol does
 
-Status as of 2026-10-31: **in development**, at protocol 2225 (Minecraft 1.26.60).
+Status as of 2026-11-03: **in development**, at protocol 2225 (Minecraft 1.26.60).
 
 ## What works
 
