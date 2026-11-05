@@ -72,3 +72,23 @@ func TestV1_26_60RoundTrip(t *testing.T) {
 		}
 	}
 }
+
+// BDS writes a sound update's variant index and then the update's own type, so a stop is two
+// bytes after the handle. One byte crashes the client.
+func TestSoundDataUpdateBytes(t *testing.T) {
+	buf := bytes.NewBuffer(nil)
+	pk := &ClientboundUpdateSoundData{ServerSoundHandle: 1, Update: protocol.SoundDataUpdate{Type: protocol.SoundDataUpdateStop}}
+	pk.Marshal(protocol.NewWriter(buf, 0))
+	want := []byte{1, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	if !bytes.Equal(buf.Bytes(), want) {
+		t.Errorf("stop: %v, want %v", buf.Bytes(), want)
+	}
+
+	buf.Reset()
+	pk.Update = protocol.SoundDataUpdate{Type: protocol.SoundDataUpdateSetVolume, Volume: 1}
+	pk.Marshal(protocol.NewWriter(buf, 0))
+	want = []byte{1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0x80, 0x3f}
+	if !bytes.Equal(buf.Bytes(), want) {
+		t.Errorf("set volume: %v, want %v", buf.Bytes(), want)
+	}
+}

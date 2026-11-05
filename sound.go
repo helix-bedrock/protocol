@@ -28,6 +28,10 @@ type SoundDataUpdate struct {
 
 // Marshal encodes/decodes a SoundDataUpdate.
 func (x *SoundDataUpdate) Marshal(io IO) {
+	// BDS writes the variant's index, then the alternative writes its own type too.
+	index := uint32(x.Type)
+	io.Varuint32(&index)
+	x.Type = uint8(index) //nolint:gosec // the switch below refuses anything out of range
 	io.Uint8(&x.Type)
 	switch x.Type {
 	case SoundDataUpdateStop, SoundDataUpdatePause, SoundDataUpdateResume:
