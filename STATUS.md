@@ -1,6 +1,6 @@
 # What protocol does
 
-Status as of 2026-11-03: **in development**, at protocol 2225 (Minecraft 1.26.60).
+Status as of 2026-11-09: **in development**, at protocol 2225 (Minecraft 1.26.60).
 
 ## What works
 
@@ -10,6 +10,8 @@ Status as of 2026-11-03: **in development**, at protocol 2225 (Minecraft 1.26.60
 - `auth` verifies login tokens the way BDS 1.26.60 does, with the clock corrected from Microsoft's
   servers.
 - NBT compounds are written with sorted keys, as BDS writes them.
+- Writes to one connection run one at a time, outgoing hooks and version conversion included, so
+  they are safe from any goroutine. An outgoing hook must not write to its own connection.
 
 ## What is left
 

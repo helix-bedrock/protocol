@@ -79,6 +79,10 @@ type Conn struct {
 	client   atomic.Pointer[login.ClientData]
 	game     atomic.Pointer[version.GameData]
 
+	// omu serializes the whole write path, hooks and conversion included, so
+	// outgoing hooks and the version converter never run twice at once on one
+	// Conn. It is taken before wmu, never after.
+	omu    sync.Mutex
 	wmu    sync.Mutex
 	enc    *packet.Encoder
 	buf    [][]byte
@@ -276,8 +280,12 @@ func (c *Conn) decode(b []byte) (packet.Packet, packet.Header, error) {
 }
 
 // WritePacket encodes pk and buffers it until the next flush. Packet-out hooks
-// run first and may change or drop it.
+// run first and may change or drop it. Writes to one Conn run one at a time,
+// hooks and conversion included, so an outgoing hook must not write to the
+// Conn it is called for.
 func (c *Conn) WritePacket(pk packet.Packet) error {
+	c.omu.Lock()
+	defer c.omu.Unlock()
 	if !c.runPacket(false, packet.Header{PacketID: pk.ID()}, &pk) {
 		return nil
 	}
@@ -302,12 +310,20 @@ func (c *Conn) encode(pk packet.Packet) error {
 	if err := packet.EncodeWith(pk, c.conf.Protocol.NewWriter(buf, c.conf.ShieldID)); err != nil {
 		return err
 	}
-	return c.WriteRaw(buf.Bytes())
+	return c.writeRaw(buf.Bytes())
 }
 
 // WriteRaw buffers b, a raw packet (header and payload), until the next flush.
-// Raw-out hooks run first and may change or drop it.
+// Raw-out hooks run first and may change or drop it. Like WritePacket, it runs
+// one write at a time, so a raw-out hook must not write to its own Conn.
 func (c *Conn) WriteRaw(b []byte) error {
+	c.omu.Lock()
+	defer c.omu.Unlock()
+	return c.writeRaw(b)
+}
+
+// writeRaw is WriteRaw with omu held.
+func (c *Conn) writeRaw(b []byte) error {
 	b, keep := c.runRaw(false, b)
 	if !keep {
 		return nil

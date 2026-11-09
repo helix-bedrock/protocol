@@ -49,7 +49,8 @@ type Hooks struct {
 func (h *Hooks) OnRawIn(fn func(*RawEvent) Verdict) (remove func()) { return h.rawIn.Add(fn) }
 
 // OnRawOut registers fn for every packet sent, as raw bytes, before it is
-// batched. Returning Drop discards it.
+// batched. Returning Drop discards it. On one Conn it runs for one write at a
+// time and must not write to that Conn; shared hooks run on many Conns at once.
 func (h *Hooks) OnRawOut(fn func(*RawEvent) Verdict) (remove func()) { return h.rawOut.Add(fn) }
 
 // OnPacketIn registers fn for every packet received, after it is decoded.
@@ -59,7 +60,8 @@ func (h *Hooks) OnPacketIn(fn func(*PacketEvent) Verdict) (remove func()) {
 }
 
 // OnPacketOut registers fn for every packet sent with WritePacket, before it
-// is encoded. Returning Drop discards it.
+// is encoded. Returning Drop discards it. On one Conn it runs for one write at
+// a time and must not write to that Conn; shared hooks run on many Conns at once.
 func (h *Hooks) OnPacketOut(fn func(*PacketEvent) Verdict) (remove func()) {
 	return h.packetOut.Add(fn)
 }
