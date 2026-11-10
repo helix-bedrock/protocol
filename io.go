@@ -90,6 +90,14 @@ func Slice[T any, S ~*[]T, A PtrMarshaler[T]](r IO, x S) {
 	SliceOfLen[T, S, A](r, count, x)
 }
 
+// SliceMax reads/writes a slice of T with a varuint32 prefix, like Slice, but with its own element limit instead
+// of the default one. It is for fields where BDS sets a different cereal SequenceContainerConstraint.
+func SliceMax[T any, S ~*[]T, A PtrMarshaler[T]](r IO, x S, max uint32) {
+	count := uint32(len(*x))
+	r.Varuint32(&count)
+	sliceOfLenMax[T, S, A](r, count, x, max)
+}
+
 // SliceUint8Length reads/writes a slice of T with a uint8 prefix.
 func SliceUint8Length[T any, S *[]T, A PtrMarshaler[T]](r IO, x S) {
 	count := uint8(len(*x))
@@ -129,9 +137,14 @@ const maxSliceLength = 1024
 
 // SliceOfLen reads/writes the elements of a slice of type T with length l.
 func SliceOfLen[T any, S ~*[]T, A PtrMarshaler[T]](r IO, l uint32, x S) {
+	sliceOfLenMax[T, S, A](r, l, x, maxSliceLength)
+}
+
+// sliceOfLenMax reads/writes the elements of a slice of type T with length l, failing a read longer than max.
+func sliceOfLenMax[T any, S ~*[]T, A PtrMarshaler[T]](r IO, l uint32, x S, max uint32) {
 	limit, ok := r.(sliceReader)
 	if ok {
-		limit.SliceLength(l, maxSliceLength)
+		limit.SliceLength(l, max)
 		if r.Err() != nil {
 			*x = nil
 			return

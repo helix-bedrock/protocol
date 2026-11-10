@@ -20,8 +20,13 @@ func (*SubChunkRequest) ID() uint32 {
 	return IDSubChunkRequest
 }
 
+// maxSubChunkRequestOffsets is the most offsets BDS 1.26.60 accepts in one request: the cereal
+// SequenceContainerConstraint on "SubChunk Position Offset List" has a maximum of 8192. The client sends more
+// than the default 1024 at large view distances, so the default limit disconnected it.
+const maxSubChunkRequestOffsets = 8192
+
 func (pk *SubChunkRequest) Marshal(io protocol.IO) {
 	io.Varint32(&pk.Dimension)
-	protocol.Slice(io, &pk.Offsets)
+	protocol.SliceMax(io, &pk.Offsets, maxSubChunkRequestOffsets)
 	io.SubChunkPos(&pk.Position)
 }
