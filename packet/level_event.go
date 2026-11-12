@@ -5,6 +5,7 @@ import (
 	"github.com/helix-bedrock/protocol"
 )
 
+// The particle types, in BDS 1.26.60's ParticleType order (its name table, 0xF4172B0).
 const (
 	ParticleTypeUndefined = iota
 	ParticleTypeBubble
@@ -15,6 +16,7 @@ const (
 	ParticleTypeExplode
 	ParticleTypeEvaporation
 	ParticleTypeFlame
+	ParticleTypeCandleFlame
 	ParticleTypeLava
 	ParticleTypeLargeSmoke
 	ParticleTypeRedDust
@@ -23,12 +25,12 @@ const (
 	ParticleTypeSnowballPoof
 	ParticleTypeLargeExplode
 	ParticleTypeHugeExplosion
+	ParticleTypeBreezeWindExplosion
 	ParticleTypeMobFlame
 	ParticleTypeHeart
 	ParticleTypeTerrain
 	ParticleTypeTownAura
 	ParticleTypePortal
-	ParticleTypeMobPortal
 	ParticleTypeWaterSplash
 	ParticleTypeWaterSplashManual
 	ParticleTypeWaterWake
@@ -76,34 +78,23 @@ const (
 	ParticleTypeCampfireSmokeTall
 	ParticleTypeDragonBreathFire
 	ParticleTypeDragonBreathTrail
-	ParticleTypeBlueFlame
 	ParticleTypeSoul
 	ParticleTypeObsidianTear
 	ParticleTypePortalReverse
 	ParticleTypeSnowflake
-	ParticleTypeVibrationSignal
-	ParticleTypeSculkSensorRedstone
-	ParticleTypeSporeBlossomShower
-	ParticleTypeSporeBlossomAmbient
 	ParticleTypeWax
 	ParticleTypeElectricSpark
-	ParticleTypeCandleFlame
 	ParticleTypeShriek
 	ParticleTypeSculkSoul
 	ParticleTypeSonicExplosion
-	ParticleTypeBrushDust
-	ParticleTypeCherryLeaves
 	ParticleTypeDustPlume
 	ParticleTypeWhiteSmoke
-	ParticleTypeWindExplosion
-	ParticleTypeBreezeWindExplosion
 	ParticleTypeVaultConnection
-	ParticleTypeWolfArmourBreak
-	ParticleTypeOminousItemSpawner
 	ParticleTypeCreakingCrumble
 	ParticleTypePaleOakLeaves
 	ParticleTypeEyeblossomOpen
 	ParticleTypeEyeblossomClose
+	ParticleTypeBlueFlame
 	ParticleTypeGreenFlame
 	ParticleTypePauseMobGrowth
 	ParticleTypeResetMobGrowth
@@ -111,6 +102,7 @@ const (
 	ParticleTypeOrangePoplarLeaves
 	ParticleTypeRedPoplarLeaves
 	ParticleTypeYellowPoplarLeaves
+	ParticleTypeIceballBreak
 )
 
 // noinspection SpellCheckingInspection
