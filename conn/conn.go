@@ -14,6 +14,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/helix-bedrock/protocol"
 	"github.com/helix-bedrock/protocol/login"
 	"github.com/helix-bedrock/protocol/packet"
 	"github.com/helix-bedrock/protocol/version"
@@ -44,6 +45,16 @@ type Config struct {
 	MaxBatchSize int
 	// DisableLimits turns off the slice length limits when decoding packets.
 	DisableLimits bool
+	// ReusePackets are the IDs of the packets this Conn reuses: one handed back with
+	// Release is cleared and read into again, so reading those packets allocates nothing
+	// once warm. For packets read many times a second (PlayerAuthInput). The caller must
+	// not keep such a packet, or anything in it, after releasing it.
+	ReusePackets []uint32
+	// FromServer is set on a client's connection, which reads what a server sends: a
+	// server may put any number of packets in one batch (a player joining a full server
+	// gets one about every player), so the 812 packet limit on batches from clients is
+	// off.
+	FromServer bool
 	// FlushInterval sends buffered packets this often. If zero, packets are
 	// only sent when Flush is called.
 	FlushInterval time.Duration
@@ -67,8 +78,20 @@ type Conn struct {
 	shared *Hooks
 
 	dec *packet.Decoder
-	// pending holds packets decoded from the last batch, not yet returned.
-	pending [][]byte
+	// batch holds the packets of the last batch read, pending views of those not yet
+	// returned and pendingAll all of them, payload the reader over the packet being
+	// decoded and reader the decoder for the latest version: all reused, so reading
+	// allocates nothing but the packets themselves. Read side only.
+	batch      []byte
+	pending    [][]byte
+	pendingAll [][]byte
+	payload    bytes.Reader
+	reader     *protocol.Reader
+	// reuse is ReusePackets as a set, and free the released packets by ID waiting to be
+	// read into again, under freeMu: Release is called from another goroutine.
+	reuse  map[uint32]bool
+	freeMu sync.Mutex
+	free   map[uint32][]packet.Packet
 	// converted holds latest packets made from one read packet, not yet
 	// returned.
 	converted []packet.Packet
@@ -82,9 +105,16 @@ type Conn struct {
 	// omu serializes the whole write path, hooks and conversion included, so
 	// outgoing hooks and the version converter never run twice at once on one
 	// Conn. It is taken before wmu, never after.
-	omu    sync.Mutex
-	wmu    sync.Mutex
-	enc    *packet.Encoder
+	omu sync.Mutex
+	wmu sync.Mutex
+	enc *packet.Encoder
+	// raw encodes one packet for the latest version, reused; under omu.
+	raw *packet.RawWriter
+	// arena holds every packet buffered since the last flush back to back, ends where
+	// each one stops, and buf the views of them handed to the encoder: all reused, so
+	// buffering a packet allocates nothing once they have grown. Under wmu.
+	arena  []byte
+	ends   []int
 	buf    [][]byte
 	closed bool
 
@@ -104,6 +134,15 @@ func New(t Transport, conf Config) *Conn {
 		conf.Log = slog.Default()
 	}
 	c := &Conn{t: t, conf: conf, log: conf.Log, shared: conf.Shared, latest: conf.Protocol == version.Latest, dec: packet.NewDecoder(t), enc: packet.NewEncoder(t), done: make(chan struct{})}
+	if conf.FromServer {
+		c.dec.DisableBatchPacketLimit()
+	}
+	if len(conf.ReusePackets) > 0 {
+		c.reuse, c.free = make(map[uint32]bool, len(conf.ReusePackets)), make(map[uint32][]packet.Packet, len(conf.ReusePackets))
+		for _, id := range conf.ReusePackets {
+			c.reuse[id] = true
+		}
+	}
 	if conf.FlushInterval > 0 {
 		go c.flushLoop(conf.FlushInterval)
 	}
@@ -163,20 +202,36 @@ func (c *Conn) EnableEncryption(key [32]byte) {
 	c.dec.EnableEncryption(key)
 }
 
+// readBatch reads the next batch into the reused buffers.
+func (c *Conn) readBatch() error {
+	clear(c.pendingAll)
+	batch, all, err := c.dec.DecodeAppend(c.batch[:0], c.pendingAll[:0])
+	if cap(batch) > maxKeptArena {
+		// One huge batch (a chunk burst) must not pin its memory for the whole session.
+		c.batch, c.pendingAll = nil, nil
+	} else {
+		c.batch, c.pendingAll = batch, all
+	}
+	if err != nil {
+		c.pending = nil
+		return err
+	}
+	c.pending = all
+	return nil
+}
+
 // ReadRaw returns the next packet as raw bytes: its header followed by its
-// payload. Raw-in hooks run first and may change or drop it.
+// payload. Raw-in hooks run first and may change or drop it. The bytes are only
+// valid until the next read: copy them to keep them.
 func (c *Conn) ReadRaw() ([]byte, error) {
 	for {
 		if len(c.pending) == 0 {
-			batch, err := c.dec.Decode()
-			if err != nil {
+			if err := c.readBatch(); err != nil {
 				return nil, err
 			}
-			c.pending = batch
 			continue
 		}
 		b := c.pending[0]
-		c.pending[0] = nil
 		c.pending = c.pending[1:]
 		b, keep := c.runRaw(true, b)
 		if keep {
@@ -258,25 +313,74 @@ func (c *Conn) ClientData() login.ClientData {
 	return login.ClientData{}
 }
 
-// decode decodes one raw packet.
+// decode decodes one raw packet: the header and the payload from one reused reader.
 func (c *Conn) decode(b []byte) (packet.Packet, packet.Header, error) {
 	var h packet.Header
-	r := bytes.NewReader(b)
+	r := &c.payload
+	r.Reset(b)
 	if err := h.Read(r); err != nil {
 		return nil, h, fmt.Errorf("read packet header: %w", err)
 	}
-	payload := b[len(b)-r.Len():]
 	f, ok := c.conf.Pool[h.PacketID]
 	if !ok {
-		return &packet.Unknown{PacketID: h.PacketID, Payload: append([]byte(nil), payload...)}, h, nil
+		return &packet.Unknown{PacketID: h.PacketID, Payload: append([]byte(nil), b[len(b)-r.Len():]...)}, h, nil
 	}
-	pk := f()
-	buf := bytes.NewBuffer(payload)
-	pr := c.conf.Protocol.NewReader(buf, c.conf.ShieldID, !c.conf.DisableLimits)
-	if err := packet.DecodeWith(pk, pr, buf); err != nil {
+	pk := c.newPacket(h.PacketID, f)
+	if err := packet.DecodeWith(pk, c.packetReader(), r); err != nil {
+		c.Release(pk)
 		return nil, h, err
 	}
 	return pk, h, nil
+}
+
+// maxFreePackets is how many released packets of one ID a Conn keeps.
+const maxFreePackets = 64
+
+// newPacket is a released packet of the ID to read into, or a new one.
+func (c *Conn) newPacket(id uint32, f func() packet.Packet) packet.Packet {
+	if !c.reuse[id] {
+		return f()
+	}
+	c.freeMu.Lock()
+	defer c.freeMu.Unlock()
+	list := c.free[id]
+	if len(list) == 0 {
+		return f()
+	}
+	pk := list[len(list)-1]
+	list[len(list)-1] = nil
+	c.free[id] = list[:len(list)-1]
+	return pk
+}
+
+// Release hands back a packet read from this Conn once the caller is done with it: one
+// of Config.ReusePackets is cleared and read into again; any other is left to the
+// garbage collector. Nothing of it may be used afterwards. Safe from any goroutine.
+func (c *Conn) Release(pk packet.Packet) {
+	if pk == nil || !c.reuse[pk.ID()] {
+		return
+	}
+	packet.Reset(pk)
+	c.freeMu.Lock()
+	defer c.freeMu.Unlock()
+	if list := c.free[pk.ID()]; len(list) < maxFreePackets {
+		c.free[pk.ID()] = append(list, pk)
+	}
+}
+
+// packetReader is the reader decode reads a payload with: one reused reader for the
+// latest version, a new one from the version otherwise.
+func (c *Conn) packetReader() protocol.IO {
+	limits := !c.conf.DisableLimits
+	if !c.latest {
+		return c.conf.Protocol.NewReader(&c.payload, c.conf.ShieldID, limits)
+	}
+	if c.reader == nil {
+		c.reader = protocol.NewReader(&c.payload, c.conf.ShieldID, limits)
+	} else {
+		c.reader.Reset(&c.payload, c.conf.ShieldID, limits)
+	}
+	return c.reader
 }
 
 // WritePacket encodes pk and buffers it until the next flush. Packet-out hooks
@@ -300,22 +404,41 @@ func (c *Conn) WritePacket(pk packet.Packet) error {
 	return nil
 }
 
-// encode encodes pk in the wire version and buffers it.
+// encode encodes pk in the wire version and buffers it. With omu held.
 func (c *Conn) encode(pk packet.Packet) error {
-	buf := bytes.NewBuffer(make([]byte, 0, 64))
-	h := packet.Header{PacketID: pk.ID()}
-	if err := h.Write(buf); err != nil {
+	if !c.latest {
+		var buf bytes.Buffer
+		h := packet.Header{PacketID: pk.ID()}
+		if err := h.Write(&buf); err != nil {
+			return err
+		}
+		if err := packet.EncodeWith(pk, c.conf.Protocol.NewWriter(&buf, c.conf.ShieldID)); err != nil {
+			return err
+		}
+		return c.writeRaw(buf.Bytes())
+	}
+	if c.raw == nil {
+		c.raw = packet.NewRawWriter(c.conf.ShieldID)
+	}
+	b, err := c.raw.Encode(pk)
+	if err != nil {
 		return err
 	}
-	if err := packet.EncodeWith(pk, c.conf.Protocol.NewWriter(buf, c.conf.ShieldID)); err != nil {
-		return err
-	}
-	return c.writeRaw(buf.Bytes())
+	return c.writeRaw(b)
+}
+
+// RawOK reports whether raw packets in the latest version (packet.RawWriter's) can be
+// written to this Conn with WriteRaw in place of the packets: it speaks the latest version
+// and no packet-out hook would miss them. A server encoding a packet once for many
+// players checks it for each. Safe from any goroutine.
+func (c *Conn) RawOK() bool {
+	return c.latest && len(c.hooks.packetOutList()) == 0 && len(c.shared.packetOutList()) == 0
 }
 
 // WriteRaw buffers b, a raw packet (header and payload), until the next flush.
 // Raw-out hooks run first and may change or drop it. Like WritePacket, it runs
-// one write at a time, so a raw-out hook must not write to its own Conn.
+// one write at a time, so a raw-out hook must not write to its own Conn. b is
+// copied, so the caller may reuse it, or write it to many Conns.
 func (c *Conn) WriteRaw(b []byte) error {
 	c.omu.Lock()
 	defer c.omu.Unlock()
@@ -333,7 +456,8 @@ func (c *Conn) writeRaw(b []byte) error {
 	if c.closed {
 		return ErrClosed
 	}
-	c.buf = append(c.buf, b)
+	c.arena = append(c.arena, b...)
+	c.ends = append(c.ends, len(c.arena))
 	return nil
 }
 
@@ -348,14 +472,30 @@ func (c *Conn) flushLocked() error {
 	if c.closed {
 		return ErrClosed
 	}
-	if len(c.buf) == 0 {
+	if len(c.ends) == 0 {
 		return nil
+	}
+	start := 0
+	for _, end := range c.ends {
+		c.buf = append(c.buf, c.arena[start:end:end])
+		start = end
 	}
 	err := c.enc.Encode(c.buf)
 	clear(c.buf)
-	c.buf = c.buf[:0]
+	c.buf, c.ends = c.buf[:0], c.ends[:0]
+	c.arena = c.arena[:0]
+	if cap(c.arena) > maxKeptArena {
+		// One huge batch (a chunk burst) must not pin its memory for the whole session.
+		c.arena = nil
+	}
 	return err
 }
+
+// maxKeptArena is the largest buffer a Conn keeps between batches: room for a tick of
+// movement with hundreds of players in view (about 13 KB for 400) and the usual packets.
+// Bigger batches (chunks) use a buffer once and drop it, so hundreds of connections never
+// each hold a chunk burst's worth of memory.
+const maxKeptArena = 64 << 10
 
 func (c *Conn) flushLoop(d time.Duration) {
 	t := time.NewTicker(d)

@@ -165,6 +165,16 @@ type PlayerAuthInput struct {
 }
 
 // ID ...
+// Reset clears pk for reading into again (conn.Config.ReusePackets), keeping the storage
+// of its input flags and block actions, the fields every input fills.
+func (pk *PlayerAuthInput) Reset() {
+	flags, actions := pk.InputData, pk.BlockActions
+	*pk = PlayerAuthInput{}
+	flags.Clear()
+	actions.Clear()
+	pk.InputData, pk.BlockActions = flags, actions
+}
+
 func (pk *PlayerAuthInput) ID() uint32 {
 	return IDPlayerAuthInput
 }

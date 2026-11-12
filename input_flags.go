@@ -11,6 +11,9 @@ type InputFlags struct {
 	set  bool
 	size int
 	ids  []int32
+	// count is the flag count as read or written: kept here, not in a local, because a
+	// local handed to the IO interface by pointer escapes to the heap on every packet.
+	count uint32
 }
 
 // NewInputFlags creates an InputFlags holding flags in the range [0, size), with none of them set.
@@ -25,6 +28,12 @@ func NewInputFlagsFromIDs(size int, ids []int32) InputFlags {
 		flags.Set(int(id))
 	}
 	return flags
+}
+
+// Clear unsets every flag and makes f not present, keeping its storage, so a packet that
+// is read into again reuses it.
+func (f *InputFlags) Clear() {
+	f.set, f.size, f.ids = false, 0, f.ids[:0]
 }
 
 // Present returns whether the InputFlags holds any flags. A value that is not present reports every flag as
@@ -82,8 +91,9 @@ func (f InputFlags) inRange(i int) bool {
 // flags that are set. Flag IDs must be unique and within range.
 func InputFlagList(r IO, x *InputFlags, size int) {
 	// Check the count before reading, so a peer cannot claim far more flags than can legally be sent.
-	count := uint32(len(x.ids))
-	r.Varuint32(&count)
+	x.count = uint32(len(x.ids))
+	r.Varuint32(&x.count)
+	count := x.count
 	if count > uint32(size) {
 		r.InvalidValue(count, "player auth input data", "too many flags")
 		return
@@ -98,5 +108,5 @@ func InputFlagList(r IO, x *InputFlags, size int) {
 			r.InvalidValue(id, "player auth input data", "flags must be unique")
 		}
 	}
-	*x = InputFlags{set: true, size: size, ids: ids}
+	*x = InputFlags{set: true, size: size, ids: ids, count: count}
 }

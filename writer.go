@@ -40,13 +40,15 @@ func NewWriter(w interface {
 	return writer
 }
 
-// Reset reuses w with a new underlying destination and shield ID.
+// Reset reuses w with a new underlying destination and shield ID, clearing any error, so
+// one Writer can encode packet after packet without allocating.
 func (w *Writer) Reset(dst interface {
 	io.Writer
 	io.ByteWriter
 }, shieldID int32) {
 	w.w = dst
 	w.shieldID = shieldID
+	w.err = nil
 }
 
 // Uint8 writes a uint8 to the underlying buffer.

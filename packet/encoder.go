@@ -87,9 +87,13 @@ func (encoder *Encoder) Encode(packets [][]byte) error {
 	buf := internal.BufferPool.Get().(*bytes.Buffer)
 	var compressedBuf *bytes.Buffer
 	defer func() {
-		// Reset the buffer, so we can return it to the buffer pool safely.
-		buf.Reset()
-		internal.BufferPool.Put(buf)
+		// Reset the buffer, so we can return it to the buffer pool safely. A buffer grown by
+		// one huge batch (a join's registries are about 2 MB) is dropped instead: kept, every
+		// join would leave one in the pool.
+		if buf.Cap() <= maxPooledEncoderBufferCap {
+			buf.Reset()
+			internal.BufferPool.Put(buf)
+		}
 		if compressedBuf != nil && compressedBuf.Cap() <= maxPooledEncoderBufferCap {
 			compressedBuf.Reset()
 			internal.BufferPool.Put(compressedBuf)

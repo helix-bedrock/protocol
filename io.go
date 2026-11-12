@@ -149,7 +149,14 @@ func sliceOfLenMax[T any, S ~*[]T, A PtrMarshaler[T]](r IO, l uint32, x S, max u
 			*x = nil
 			return
 		}
-		*x = make([]T, l)
+		if uint32(cap(*x)) >= l {
+			// A packet read into again keeps its slices: cleared, so nothing of the last
+			// read is left in fields a later element does not set.
+			*x = (*x)[:l]
+			clear(*x)
+		} else {
+			*x = make([]T, l)
+		}
 	}
 
 	for i := uint32(0); i < l; i++ {
@@ -166,7 +173,14 @@ func FuncSliceOfLen[T any, S ~*[]T](r IO, l uint32, x S, f func(*T)) {
 			*x = nil
 			return
 		}
-		*x = make([]T, l)
+		if uint32(cap(*x)) >= l {
+			// A packet read into again keeps its slices: cleared, so nothing of the last
+			// read is left in fields a later element does not set.
+			*x = (*x)[:l]
+			clear(*x)
+		} else {
+			*x = make([]T, l)
+		}
 	}
 
 	for i := uint32(0); i < l; i++ {
@@ -218,6 +232,12 @@ func Option[T any](val T) Optional[T] {
 // Value returns the value set in the Optional. If no value was set, false is returned.
 func (o Optional[T]) Value() (T, bool) {
 	return o.val, o.set
+}
+
+// Clear makes o not set, keeping its value's storage, so a packet that is read into again
+// reuses it. The value is left as it was; only Value's false says it is not there.
+func (o *Optional[T]) Clear() {
+	o.set = false
 }
 
 // OptionalFunc reads/writes an Optional[T].

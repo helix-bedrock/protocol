@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"hash"
 )
 
 // Encryption encrypts, decrypts and verifies Minecraft packet batches. Implementations are stateful and must not be
@@ -25,12 +26,29 @@ type encrypt struct {
 	buf         [8]byte
 	keyBytes    []byte
 	stream      cipher.Stream
+	// hash and sum are the checksum's hash and digest, made once and reused for every
+	// batch, so a checksum allocates nothing.
+	hash hash.Hash
+	sum  []byte
 }
 
 // newEncrypt returns a new encryption 'session' using the secret key bytes passed. The session has its cipher
 // block and IV prepared so that it may be used to decrypt and encrypt data.
 func newEncrypt(keyBytes []byte, stream cipher.Stream) *encrypt {
-	return &encrypt{keyBytes: append([]byte(nil), keyBytes...), stream: stream}
+	return &encrypt{keyBytes: append([]byte(nil), keyBytes...), stream: stream, hash: sha256.New(), sum: make([]byte, 0, sha256.Size)}
+}
+
+// checksum is the first 8 bytes of the batch checksum of data at the next counter.
+func (encrypt *encrypt) checksum(data []byte) []byte {
+	binary.LittleEndian.PutUint64(encrypt.buf[:], encrypt.sendCounter)
+	encrypt.sendCounter++
+	h := encrypt.hash
+	h.Reset()
+	h.Write(encrypt.buf[:])
+	h.Write(data)
+	h.Write(encrypt.keyBytes)
+	encrypt.sum = h.Sum(encrypt.sum[:0])
+	return encrypt.sum[:8]
 }
 
 // NewCTREncryption returns the encryption used by current Minecraft versions.
@@ -52,20 +70,9 @@ func NewCFB8Encryption(keyBytes [32]byte) Encryption {
 
 // Encrypt encrypts the data passed, adding the packet checksum at the end before applying the configured stream.
 func (encrypt *encrypt) Encrypt(data []byte) []byte {
-	// We first write the current send counter to a buffer and use it to produce a packet checksum.
-	binary.LittleEndian.PutUint64(encrypt.buf[:], encrypt.sendCounter)
-	encrypt.sendCounter++
-
-	// We produce a hash existing of the send counter, packet data and key bytes.
-	hash := sha256.New()
-	hash.Write(encrypt.buf[:])
-	hash.Write(data[1:])
-	hash.Write(encrypt.keyBytes)
-
-	// We add the first 8 bytes of the checksum to the data and encrypt it.
-	var digest [sha256.Size]byte
-	data = append(data, hash.Sum(digest[:0])[:8]...)
-
+	// The checksum of the send counter, the batch and the key goes on the end, then
+	// everything after the header is encrypted.
+	data = append(data, encrypt.checksum(data[1:])...)
 	encrypt.stream.XORKeyStream(data[1:], data[1:])
 	return data
 }
@@ -82,19 +89,7 @@ func (encrypt *encrypt) Verify(data []byte) error {
 		return fmt.Errorf("encrypted packet must be at least 8 bytes long, got %v", len(data))
 	}
 	sum := data[len(data)-8:]
-
-	// We first write the current send counter to a buffer and use it to produce a packet checksum.
-	binary.LittleEndian.PutUint64(encrypt.buf[:], encrypt.sendCounter)
-	encrypt.sendCounter++
-
-	// We produce a hash existing of the send counter, packet data and key bytes.
-	hash := sha256.New()
-	hash.Write(encrypt.buf[:])
-	hash.Write(data[:len(data)-8])
-	hash.Write(encrypt.keyBytes)
-	var digest [sha256.Size]byte
-	ourSum := hash.Sum(digest[:0])[:8]
-
+	ourSum := encrypt.checksum(data[:len(data)-8])
 	// Finally we check if the original sum was equal to the sum we just produced.
 	if !bytes.Equal(sum, ourSum) {
 		// Pass the checksum by value so error formatting does not move digest to the heap.

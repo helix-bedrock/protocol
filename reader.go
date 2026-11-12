@@ -39,6 +39,15 @@ func NewReader(r interface {
 	return &Reader{r: r, shieldID: shieldID, limitsEnabled: enableLimits}
 }
 
+// Reset reuses r on a new source, clearing any error, so one Reader can decode packet
+// after packet without allocating.
+func (r *Reader) Reset(src interface {
+	io.Reader
+	io.ByteReader
+}, shieldID int32, enableLimits bool) {
+	r.r, r.shieldID, r.limitsEnabled, r.err = src, shieldID, enableLimits, nil
+}
+
 // Uint8 reads a uint8 from the underlying buffer.
 func (r *Reader) Uint8(x *uint8) {
 	var err error

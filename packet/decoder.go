@@ -155,6 +155,30 @@ func (decoder *Decoder) Decode() (packets [][]byte, err error) {
 	return packets, nil
 }
 
+// DecodeAppend decodes one packet batch, copying its packets onto the end of dst and
+// appending a view of each to packets, and returns both. A caller that passes the same
+// two back each time, emptied, decodes with no allocation once they have grown; the
+// views are valid until dst is reused.
+func (decoder *Decoder) DecodeAppend(dst []byte, packets [][]byte) ([]byte, [][]byte, error) {
+	data, pooled, err := decoder.readBatch()
+	if pooled != nil {
+		defer putDecompressBuffer(pooled)
+	}
+	if err != nil {
+		return dst, packets, err
+	}
+	if err := decoder.walkBatch(data, nil); err != nil {
+		return dst, packets, err
+	}
+	start := len(dst)
+	dst = append(dst, data...)
+	err = decoder.walkBatch(dst[start:], func(packet []byte) error {
+		packets = append(packets, packet)
+		return nil
+	})
+	return dst, packets, err
+}
+
 // DecodeFunc decodes one packet batch and calls f for each packet in the batch. The packet slice passed to f
 // is only valid until f returns: it may point into a pooled buffer that is reused for the next batch, so f
 // must copy the slice if it needs to keep it. The batch is validated in full before the first call to f, so a
@@ -223,7 +247,8 @@ func (decoder *Decoder) readBatch() (data []byte, pooled *[]byte, err error) {
 				if !ok {
 					return nil, nil, fmt.Errorf("decompress batch: unknown compression algorithm %v", data[0])
 				}
-				if compression != decoder.compression {
+				// Compared by ID: flate at another level is still flate.
+				if compression.EncodeCompression() != decoder.compression.EncodeCompression() {
 					return nil, nil, fmt.Errorf("decompress batch: unexpected compression algorithm: got %v, expected %v", compression, decoder.compression)
 				}
 				data, pooled, err = decoder.decompressBatch(compression, data[1:])
