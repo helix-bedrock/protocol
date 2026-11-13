@@ -1,7 +1,7 @@
 package packet
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
 	"github.com/helix-bedrock/protocol"
 	"github.com/helix-bedrock/protocol/nbt"
@@ -57,7 +57,7 @@ type StartGame struct {
 	PlayerGameMode int32
 	// PlayerPosition is the spawn position of the player in the world. In servers this is often the same as
 	// the world's spawn position found below.
-	PlayerPosition mgl32.Vec3
+	PlayerPosition mgl64.Vec3
 	// Pitch is the vertical rotation of the player. Facing straight forward yields a pitch of 0. Pitch is
 	// measured in degrees.
 	Pitch float32
@@ -290,7 +290,7 @@ func (pk *StartGame) Marshal(io protocol.IO) {
 	io.ActorUniqueID(&pk.EntityUniqueID)
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
 	io.Varint32(&pk.PlayerGameMode)
-	io.Vec3(&pk.PlayerPosition)
+	io.PosVec3(&pk.PlayerPosition)
 	io.Float32(&pk.Pitch)
 	io.Float32(&pk.Yaw)
 	io.Int64(&pk.WorldSeed)

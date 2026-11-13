@@ -2,6 +2,7 @@ package packet
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -20,7 +21,7 @@ type AddActor struct {
 	EntityType string
 	// Position is the position to spawn the entity on. If the entity is on a distance that the player cannot
 	// see it, the entity will still show up if the player moves closer.
-	Position mgl32.Vec3
+	Position mgl64.Vec3
 	// Velocity is the initial velocity the entity spawns with. This velocity will initiate client side
 	// movement of the entity.
 	Velocity mgl32.Vec3
@@ -63,7 +64,7 @@ func (pk *AddActor) Marshal(io protocol.IO) {
 	io.ActorUniqueID(&pk.EntityUniqueID)
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
 	io.String(&pk.EntityType)
-	io.Vec3(&pk.Position)
+	io.PosVec3(&pk.Position)
 	io.Vec3(&pk.Velocity)
 	io.Float32(&pk.Pitch)
 	io.Float32(&pk.Yaw)

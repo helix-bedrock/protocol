@@ -12,6 +12,7 @@ import (
 	"unsafe"
 
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
 	"github.com/helix-bedrock/protocol/nbt"
 )
@@ -139,6 +140,20 @@ func (r *Reader) ByteSlice(x *[]byte) {
 		return
 	}
 	*x = data
+}
+
+// PosVec3 reads three float32s into a 64-bit position.
+func (r *Reader) PosVec3(x *mgl64.Vec3) {
+	r.PosFloat(&x[0])
+	r.PosFloat(&x[1])
+	r.PosFloat(&x[2])
+}
+
+// PosFloat reads a float32 into a 64-bit coordinate.
+func (r *Reader) PosFloat(x *float64) {
+	var f float32
+	r.Float32(&f)
+	*x = float64(f)
 }
 
 // Vec3 reads three float32s into an mgl32.Vec3 from the underlying buffer.

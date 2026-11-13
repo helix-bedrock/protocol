@@ -12,9 +12,9 @@ type MoveActorDelta struct {
 	// non-player entity with this runtime ID is present.
 	EntityRuntimeID uint64
 	// Position is the new position that the entity was moved to.
-	PositionX protocol.Optional[float32]
-	PositionY protocol.Optional[float32]
-	PositionZ protocol.Optional[float32]
+	PositionX protocol.Optional[float64]
+	PositionY protocol.Optional[float64]
+	PositionZ protocol.Optional[float64]
 	// Rotation is the new absolute rotation. Unlike the position, it is not actually a delta. If any of the
 	// values of this rotation are not sent, these values are 0 and no flag for them is present.
 	RotationX     protocol.Optional[float32]
@@ -41,9 +41,9 @@ func (*MoveActorDelta) ID() uint32 {
 
 func (pk *MoveActorDelta) Marshal(io protocol.IO) {
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
-	protocol.OptionalFunc(io, &pk.PositionX, io.Float32)
-	protocol.OptionalFunc(io, &pk.PositionY, io.Float32)
-	protocol.OptionalFunc(io, &pk.PositionZ, io.Float32)
+	protocol.OptionalFunc(io, &pk.PositionX, io.PosFloat)
+	protocol.OptionalFunc(io, &pk.PositionY, io.PosFloat)
+	protocol.OptionalFunc(io, &pk.PositionZ, io.PosFloat)
 	protocol.OptionalFunc(io, &pk.RotationX, io.ByteFloat)
 	protocol.OptionalFunc(io, &pk.RotationY, io.ByteFloat)
 	protocol.OptionalFunc(io, &pk.RotationYHead, io.ByteFloat)

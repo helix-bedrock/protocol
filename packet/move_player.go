@@ -1,7 +1,7 @@
 package packet
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -28,7 +28,7 @@ type MovePlayer struct {
 	EntityRuntimeID uint64
 	// Position is the position to spawn the player on. If the player is on a distance that the viewer cannot
 	// see it, the player will still show up if the viewer moves closer.
-	Position mgl32.Vec3
+	Position mgl64.Vec3
 	// Pitch is the vertical rotation of the player. Facing straight forward yields a pitch of 0. Pitch is
 	// measured in degrees.
 	Pitch float32
@@ -58,7 +58,7 @@ func (*MovePlayer) ID() uint32 {
 
 func (pk *MovePlayer) Marshal(io protocol.IO) {
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
-	io.Vec3(&pk.Position)
+	io.PosVec3(&pk.Position)
 	io.Float32(&pk.Pitch)
 	io.Float32(&pk.Yaw)
 	io.Float32(&pk.HeadYaw)

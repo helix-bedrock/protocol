@@ -1,7 +1,7 @@
 package packet
 
 import (
-	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -22,7 +22,7 @@ type ChangeDimension struct {
 	// dimension change screen.
 	Dimension int32
 	// Position is the position in the new dimension that the player is spawned in.
-	Position mgl32.Vec3
+	Position mgl64.Vec3
 	// Respawn specifies if the dimension change was respawn based, meaning that the player died in one
 	// dimension and got respawned into another. The client will send a PlayerAction packet with
 	// PlayerActionDimensionChangeRequest if it dies in another dimension, indicating that it needs a
@@ -42,7 +42,7 @@ func (*ChangeDimension) ID() uint32 {
 
 func (pk *ChangeDimension) Marshal(io protocol.IO) {
 	io.Varint32(&pk.Dimension)
-	io.Vec3(&pk.Position)
+	io.PosVec3(&pk.Position)
 	io.Bool(&pk.Respawn)
 	protocol.OptionalFunc(io, &pk.LoadingScreenID, io.Uint32)
 }

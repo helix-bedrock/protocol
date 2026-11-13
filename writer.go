@@ -11,6 +11,7 @@ import (
 	"unsafe"
 
 	"github.com/go-gl/mathgl/mgl32"
+	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
 	"github.com/helix-bedrock/protocol/internal"
 	"github.com/helix-bedrock/protocol/nbt"
@@ -109,6 +110,19 @@ func (w *Writer) Bytes(x *[]byte) {
 // ByteFloat writes a rotational float32 as a single byte to the underlying buffer.
 func (w *Writer) ByteFloat(x *float32) {
 	_ = w.w.WriteByte(byte(*x / (360.0 / 256.0)))
+}
+
+// PosVec3 writes a 64-bit position as 3 float32s.
+func (w *Writer) PosVec3(x *mgl64.Vec3) {
+	w.PosFloat(&x[0])
+	w.PosFloat(&x[1])
+	w.PosFloat(&x[2])
+}
+
+// PosFloat writes a 64-bit coordinate as a float32.
+func (w *Writer) PosFloat(x *float64) {
+	f := float32(*x)
+	w.Float32(&f)
 }
 
 // Vec3 writes an mgl32.Vec3 as 3 float32s to the underlying buffer.
