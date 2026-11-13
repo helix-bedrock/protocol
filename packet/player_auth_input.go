@@ -2,7 +2,6 @@ package packet
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/go-gl/mathgl/mgl64"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -116,7 +115,7 @@ type PlayerAuthInput struct {
 	// Pitch and Yaw hold the rotation that the player reports it has.
 	Pitch, Yaw float32
 	// Position holds the position that the player reports it has.
-	Position mgl64.Vec3
+	Position mgl32.Vec3
 	// MoveVector is a Vec2 that specifies the direction in which the player moved, as a combination of X/Z
 	// values which are created using the WASD/controller stick state.
 	MoveVector mgl32.Vec2
@@ -183,7 +182,7 @@ func (pk *PlayerAuthInput) ID() uint32 {
 func (pk *PlayerAuthInput) Marshal(io protocol.IO) {
 	io.Float32(&pk.Pitch)
 	io.Float32(&pk.Yaw)
-	io.PosVec3(&pk.Position)
+	io.Vec3(&pk.Position)
 	io.Vec2(&pk.MoveVector)
 	io.Float32(&pk.HeadYaw)
 	protocol.InputFlagList(io, &pk.InputData, InputFlagCount)

@@ -4,7 +4,6 @@ import (
 	"image/color"
 
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
 	"github.com/helix-bedrock/protocol/nbt"
 	"golang.org/x/exp/constraints"
@@ -44,10 +43,6 @@ type IO interface {
 	StringUTF(x *string)
 	ByteSlice(x *[]byte)
 	Vec3(x *mgl32.Vec3)
-	// PosVec3 is a position kept in 64 bits, sent as the wire's three float32s.
-	PosVec3(x *mgl64.Vec3)
-	// PosFloat is one coordinate kept in 64 bits, sent as the wire's float32.
-	PosFloat(x *float64)
 	Vec2(x *mgl32.Vec2)
 	BlockPos(x *BlockPos)
 	ChunkPos(x *ChunkPos)

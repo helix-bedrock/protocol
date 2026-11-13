@@ -1,7 +1,7 @@
 package packet
 
 import (
-	"github.com/go-gl/mathgl/mgl64"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -18,7 +18,7 @@ const (
 type Respawn struct {
 	// Position is the position on which the player should be respawned. The position might be in a different
 	// dimension, in which case the client should first be sent a ChangeDimension packet.
-	Position mgl64.Vec3
+	Position mgl32.Vec3
 	// State is the 'state' of the respawn. It is one of the constants that may be found above, and the value
 	// the packet contains depends on whether the server or client sends it.
 	State byte
@@ -33,7 +33,7 @@ func (*Respawn) ID() uint32 {
 }
 
 func (pk *Respawn) Marshal(io protocol.IO) {
-	io.PosVec3(&pk.Position)
+	io.Vec3(&pk.Position)
 	io.Uint8(&pk.State)
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
 }

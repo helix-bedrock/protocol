@@ -2,7 +2,6 @@ package packet
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/go-gl/mathgl/mgl64"
 	"github.com/helix-bedrock/protocol"
 )
 
@@ -20,7 +19,7 @@ type CorrectPlayerMovePrediction struct {
 	// Position is the position that the player is supposed to be at the tick written in the field below.
 	// The client will change its current position based on movement after that tick starting from the
 	// Position.
-	Position mgl64.Vec3
+	Position mgl32.Vec3
 	// Delta is the change in position compared to what the client sent as its position at that specific tick.
 	Delta mgl32.Vec3
 	// Rotation is the rotation of the player at the tick written in the field below.
@@ -40,7 +39,7 @@ func (*CorrectPlayerMovePrediction) ID() uint32 {
 
 func (pk *CorrectPlayerMovePrediction) Marshal(io protocol.IO) {
 	io.Uint8(&pk.PredictionType)
-	io.PosVec3(&pk.Position)
+	io.Vec3(&pk.Position)
 	io.Vec3(&pk.Delta)
 	io.Vec2(&pk.Rotation)
 	protocol.OptionalFunc(io, &pk.VehicleAngularVelocity, io.Float32)

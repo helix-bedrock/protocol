@@ -2,7 +2,6 @@ package packet
 
 import (
 	"github.com/go-gl/mathgl/mgl32"
-	"github.com/go-gl/mathgl/mgl64"
 	"github.com/google/uuid"
 	"github.com/helix-bedrock/protocol"
 )
@@ -26,7 +25,7 @@ type AddPlayer struct {
 	PlatformChatID string
 	// Position is the position to spawn the player on. If the player is on a distance that the viewer cannot
 	// see it, the player will still show up if the viewer moves closer.
-	Position mgl64.Vec3
+	Position mgl32.Vec3
 	// Velocity is the initial velocity the player spawns with. This velocity will initiate client side
 	// movement of the player.
 	Velocity mgl32.Vec3
@@ -77,7 +76,7 @@ func (pk *AddPlayer) Marshal(io protocol.IO) {
 	io.String(&pk.Username)
 	io.ActorRuntimeID(&pk.EntityRuntimeID)
 	io.String(&pk.PlatformChatID)
-	io.PosVec3(&pk.Position)
+	io.Vec3(&pk.Position)
 	io.Vec3(&pk.Velocity)
 	io.Float32(&pk.Pitch)
 	io.Float32(&pk.Yaw)

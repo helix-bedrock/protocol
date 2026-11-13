@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-gl/mathgl/mgl64"
+	"github.com/go-gl/mathgl/mgl32"
 	"github.com/helix-bedrock/protocol"
 	"github.com/helix-bedrock/protocol/packet"
 	"github.com/helix-bedrock/protocol/version"
@@ -47,7 +47,7 @@ var benchKey = [32]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 1
 const movesPerBatch = 50
 
 func movePlayer(i int) *packet.MovePlayer {
-	return &packet.MovePlayer{EntityRuntimeID: uint64(i + 1), Position: mgl64.Vec3{float64(i), 64, float64(i)}, Pitch: 10, Yaw: 20, HeadYaw: 20, OnGround: true, Tick: 1000}
+	return &packet.MovePlayer{EntityRuntimeID: uint64(i + 1), Position: mgl32.Vec3{float32(i), 64, float32(i)}, Pitch: 10, Yaw: 20, HeadYaw: 20, OnGround: true, Tick: 1000}
 }
 
 // serverConn is a server's Conn to one player with compression and encryption on.
@@ -190,7 +190,7 @@ func BenchmarkReadAuthInput(b *testing.B) {
 	w := New(rec, Config{Pool: version.Latest.Packets(true)})
 	w.EnableCompression(packet.FlateCompression, 256)
 	w.EnableEncryption(benchKey)
-	in := &packet.PlayerAuthInput{Position: mgl64.Vec3{1, 65.62, 1}, Tick: 1, InputData: protocol.NewInputFlags(packet.InputFlagCount)}
+	in := &packet.PlayerAuthInput{Position: mgl32.Vec3{1, 65.62, 1}, Tick: 1, InputData: protocol.NewInputFlags(packet.InputFlagCount)}
 	in.InputData.Set(packet.InputFlagVerticalCollision)
 	in.InputData.Set(packet.InputFlagUp)
 	for range b.N {

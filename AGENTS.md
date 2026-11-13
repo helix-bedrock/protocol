@@ -27,10 +27,6 @@ go test -race ./...
   `DefaultFlateLevel` 3, `NewFlateCompression` for another level), encryption,
   `RawWriter` (one packet encoded once to write to many conns), `Reset` (clearing a
   packet to read into again).
-  `Shifted` + `Shift` (shift.go): a copy of a packet with every world position moved
-  along X and Z, for servers that show a client the world around another origin. The
-  positions of players and entities (`mgl64.Vec3`/`float64` fields, `PosVec3`/`PosFloat`
-  in `IO`) are kept in 64 bits and sent as float32, so the shift is exact.
 - `login`: login request parsing, client data, and the server handshake token (as BDS makes it).
 - `auth`: verifies multiplayer tokens the way BDS does (discovery as a dedicated server, OpenID configuration, key set, clock corrected from Microsoft's Date header), plus nbf/iat checks BDS does not do.
 - `nbt`: NBT encoding.
