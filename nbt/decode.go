@@ -24,6 +24,9 @@ type Decoder struct {
 
 	r     *offsetReader
 	depth int
+	// skip, when set, names tags of compounds decoded into maps that are read past and left
+	// out (Raw.ValueWithout).
+	skip func(name string) bool
 }
 
 var mapStringAnyType = reflect.TypeOf(map[string]any(nil))
@@ -137,6 +140,12 @@ func (d *Decoder) unmarshalCompoundAny(m map[string]any) error {
 		if nestedTagType == tagEnd {
 			// We reached the end of the compound.
 			break
+		}
+		if d.skip != nil && d.skip(nestedTagName) {
+			if err := d.skipPayload(nestedTagType); err != nil {
+				return err
+			}
+			continue
 		}
 
 		v = nil

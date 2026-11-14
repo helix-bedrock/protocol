@@ -111,6 +111,12 @@ func (e *Encoder) marshal(val reflect.Value, tagName string) error {
 	if val.Kind() == reflect.Pointer {
 		val = val.Elem()
 	}
+	if t, ok := rawTag(val); ok {
+		if err := e.writeTag(t, tagName); err != nil {
+			return err
+		}
+		return e.encode(val, tagName)
+	}
 	tagType := tagFromType(val.Type())
 	if tagType == math.MaxUint8 {
 		return IncompatibleTypeError{Type: val.Type(), ValueName: tagName}
@@ -128,6 +134,10 @@ func (e *Encoder) encode(val reflect.Value, tagName string) error {
 	if kind == reflect.Interface {
 		val = val.Elem()
 		kind = val.Kind()
+	}
+	if _, ok := rawTag(val); ok {
+		r, _ := val.Interface().(Raw)
+		return e.writeRaw(r)
 	}
 	switch vk := kind; vk {
 	case reflect.Uint8:
@@ -212,6 +222,16 @@ func (e *Encoder) encode(val reflect.Value, tagName string) error {
 		}
 
 		listType := tagFromType(elemType)
+		if elemType == rawType {
+			listType = tagEnd
+			if val.Len() > 0 {
+				first := val.Index(0)
+				if first.Kind() == reflect.Interface {
+					first = first.Elem()
+				}
+				listType, _ = rawTag(first)
+			}
+		}
 		if listType == math.MaxUint8 {
 			return IncompatibleTypeError{Type: val.Type(), ValueName: tagName}
 		}
