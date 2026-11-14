@@ -3,6 +3,7 @@ package nbt
 import (
 	"bytes"
 	"io"
+	"strings"
 	"testing"
 )
 
@@ -64,5 +65,29 @@ func TestCompoundReader(t *testing.T) {
 	}
 	if _, err := NewCompoundReader(bytes.NewReader(all[:50]), 50, LittleEndian).Next(); err == nil {
 		t.Fatal("truncated compound read without error")
+	}
+}
+
+func TestEachField(t *testing.T) {
+	data, err := MarshalEncoding(map[string]any{"a": int32(1), "big": make([]byte, 100), "list": []any{"x", "y"}}, LittleEndian)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var names []string
+	var body []byte
+	n, err := EachField(data, LittleEndian, func(name string, start, end int) bool {
+		names = append(names, name)
+		body = append(body, data[start:end]...)
+		return true
+	})
+	if err != nil || n != len(data) {
+		t.Fatalf("EachField: %d of %d, %v", n, len(data), err)
+	}
+	if strings.Join(names, ",") != "a,big,list" {
+		t.Fatalf("names %v", names)
+	}
+	// head: type byte + empty root name (2 bytes); tail: end tag.
+	if !bytes.Equal(body, data[3:len(data)-1]) {
+		t.Fatal("fields do not cover the compound")
 	}
 }

@@ -137,3 +137,37 @@ func (r *recordingReader) Next(n int) []byte {
 
 // Len is how many bytes are left, so lengths read are checked against it.
 func (r *recordingReader) Len() int { return int(min(r.left, int64(^uint(0)>>1))) }
+
+// EachField calls fn with the byte range [start, end) of each field of the root compound encoded
+// at the start of data, its type byte and name included, in the order stored, until fn returns
+// false. Fields are read past without being decoded. It returns the length of the compound.
+// Splicing the ranges back together, in order, between the compound's head and its end tag gives
+// the compound unchanged, so a caller can cut big fields out and put them back byte for byte.
+func EachField(data []byte, encoding Encoding, fn func(name string, start, end int) bool) (int, error) {
+	d := &Decoder{Encoding: encoding, r: newOffsetReader(bytes.NewBuffer(data))}
+	t, _, err := d.tag()
+	if err != nil {
+		return 0, err
+	}
+	if t != tagStruct {
+		return 0, UnexpectedTagError{Off: d.r.off, TagType: t}
+	}
+	d.depth++
+	more := true
+	for {
+		start := d.r.off
+		ft, name, err := d.tag()
+		if err != nil {
+			return 0, err
+		}
+		if ft == tagEnd {
+			return int(d.r.off), nil
+		}
+		if err := d.skipPayload(ft); err != nil {
+			return 0, err
+		}
+		if more {
+			more = fn(name, int(start), int(d.r.off))
+		}
+	}
+}
