@@ -41,6 +41,13 @@ go test -race ./...
   values in the packet or struct.
 - `version`: the `Protocol` interface; `conn` converts every packet through it.
 - `internal`: small shared helpers; `internal/hook` is the hook list.
+- `internal/protodef` and `cmd/protodef`: generate a ProtoDef schema (minecraft-data's
+  `protocol.json` format) from the `Marshal` methods. When a packet changes, run
+  `go test ./internal/protodef`: it checks the schema against the Reader and Writer, and
+  fails on code the generator cannot follow. `schema/protocol.json` is generated, so do
+  not edit it by hand: regenerate it with `go run ./cmd/protodef -o schema/protocol.json`
+  in the same change, or leave it to the pull request the ProtoDef schema workflow
+  opens after a push to `main` changes it.
 
 ## Invariants: do not break these
 

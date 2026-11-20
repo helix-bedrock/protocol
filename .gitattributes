@@ -3,3 +3,4 @@
 testdata/** -text
 *.png binary
 *.ldb binary
+schema/protocol.json linguist-generated=true
