@@ -507,6 +507,9 @@ func (r *Reader) itemUserData(shield bool) itemUserData {
 	if shield {
 		bufReader.Int64(&x.blockingTick)
 	}
+	if bufReader.Err() != nil {
+		r.err = bufReader.Err()
+	}
 	return x
 }
 
@@ -535,7 +538,7 @@ func (r *Reader) StackRequestAction(x *StackRequestAction) {
 func (r *Reader) MaterialReducer(m *MaterialReducer) {
 	var mix int32
 	r.Varint32(&mix)
-	m.InputItem = ItemType{NetworkID: mix << 16, MetadataValue: uint32(mix & 0x7fff)}
+	m.InputItem = ItemType{NetworkID: mix >> 16, MetadataValue: uint32(mix & 0x7fff)}
 	Slice(r, &m.Outputs)
 }
 
