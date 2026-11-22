@@ -460,7 +460,6 @@ var rewrittenFields = []struct {
 	{"SoundDataUpdate.index", "the index is written from the type"},
 	{"packet_inventory_transaction.has_legacy", "has_legacy is derived from LegacyRequestID"},
 	{"packet_inventory_transaction.legacy_set_item_slots", "has_legacy is derived from LegacyRequestID"},
-	{"packet_player_location.type", "the type is written twice and read back from the second"},
 	{"packet_text.category_type", "the category is derived from the text type"},
 	{"packet_event.event_ordinal", "the ordinal is derived from the event type"},
 	{"ScoreboardEntry.type_name", "the type name is written from the identity type"},
