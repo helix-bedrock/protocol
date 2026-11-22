@@ -54,7 +54,7 @@ jobs:
               echo '```'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: protocol.json
           path: ${{ env.SCHEMA }}
@@ -80,7 +80,7 @@ jobs:
         run: go test -count=1 ./internal/protodef
       - name: Generate the schema
         run: go run ./cmd/protodef -o "$SCHEMA"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: protocol.json
           path: ${{ env.SCHEMA }}
