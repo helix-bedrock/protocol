@@ -331,7 +331,7 @@ func (w *Writer) ItemInstance(i *ItemInstance) {
 	}
 
 	IntegerFunc(&x.BlockRuntimeID, w.Varuint32)
-	w.itemUserData(itemStackUserData(x), x.NetworkID != 0, x.NetworkID == w.shieldID)
+	w.itemUserData(itemStackUserData(x), x.NetworkID != 0, isShield(x.NetworkID, w.shieldID))
 }
 
 // Item writes an ItemStack x to the underlying buffer.
@@ -341,7 +341,7 @@ func (w *Writer) Item(x *ItemStack) {
 	w.Uint16(&x.Count)
 	w.Varuint32(&x.MetadataValue)
 	w.Varint32(&x.BlockRuntimeID)
-	w.itemUserData(itemStackUserData(x), x.NetworkID != 0, x.NetworkID == w.shieldID)
+	w.itemUserData(itemStackUserData(x), x.NetworkID != 0, isShield(x.NetworkID, w.shieldID))
 }
 
 // StackRequestItem writes the descriptor-based item format used by deprecated craft-result actions.

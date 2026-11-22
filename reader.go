@@ -438,7 +438,7 @@ func (r *Reader) ItemInstance(i *ItemInstance) {
 	}
 
 	IntegerFunc(&x.BlockRuntimeID, r.Varuint32)
-	data := r.itemUserData(x.NetworkID == r.shieldID)
+	data := r.itemUserData(isShield(x.NetworkID, r.shieldID))
 	x.NBTData, x.CanBePlacedOn, x.CanBreak, x.BlockingTick = data.nbtData, data.canBePlacedOn, data.canBreak, data.blockingTick
 }
 
@@ -449,7 +449,7 @@ func (r *Reader) Item(x *ItemStack) {
 	r.Uint16(&x.Count)
 	r.Varuint32(&x.MetadataValue)
 	r.Varint32(&x.BlockRuntimeID)
-	data := r.itemUserData(x.NetworkID == r.shieldID)
+	data := r.itemUserData(isShield(x.NetworkID, r.shieldID))
 	x.NBTData, x.CanBePlacedOn, x.CanBreak, x.BlockingTick = data.nbtData, data.canBePlacedOn, data.canBreak, data.blockingTick
 }
 
@@ -475,6 +475,13 @@ func (r *Reader) StackRequestItem(x *StackRequestItem) {
 	IntegerFunc(&x.BlockRuntimeID, r.Varuint32)
 	data := r.itemUserData(x.Identifier == "minecraft:shield")
 	x.NBTData, x.CanBePlacedOn, x.CanBreak, x.BlockingTick = data.nbtData, data.canBePlacedOn, data.canBreak, data.blockingTick
+}
+
+// isShield reports whether an item with network ID id carries the shield's blocking tick. Air (ID 0)
+// never does: a reader or writer whose shield ID is not known yet holds 0, and without this check
+// every empty slot would be read as a shield, past the end of its user data.
+func isShield(id, shieldID int32) bool {
+	return id != 0 && id == shieldID
 }
 
 func (r *Reader) itemUserData(shield bool) itemUserData {
