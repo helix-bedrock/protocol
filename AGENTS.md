@@ -39,6 +39,8 @@ go test -race ./...
   client's connection (no 812 packet batch limit). A value handed to the `IO`
   interface by pointer from a local escapes to the heap on every packet: keep such
   values in the packet or struct.
+  A packet the pool knows but cannot decode comes back from `ReadPacket` as a
+  `*conn.DecodeError` with its ID and a copy of its raw payload, so a server can log it.
 - `version`: the `Protocol` interface; `conn` converts every packet through it.
 - `internal`: small shared helpers; `internal/hook` is the hook list.
 - `internal/protodef` and `cmd/protodef`: generate a ProtoDef schema (minecraft-data's

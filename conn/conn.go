@@ -328,10 +328,24 @@ func (c *Conn) decode(b []byte) (packet.Packet, packet.Header, error) {
 	pk := c.newPacket(h.PacketID, f)
 	if err := packet.DecodeWith(pk, c.packetReader(), r); err != nil {
 		c.Release(pk)
-		return nil, h, err
+		return nil, h, &DecodeError{PacketID: h.PacketID, Payload: append([]byte(nil), b...), Err: err}
 	}
 	return pk, h, nil
 }
+
+// DecodeError is a packet ReadPacket could not decode: the packet's ID, its whole payload
+// (header included) as it arrived, and why. It is returned only for packets the pool knows.
+type DecodeError struct {
+	PacketID uint32
+	Payload  []byte
+	Err      error
+}
+
+// Error implements error.
+func (e *DecodeError) Error() string { return e.Err.Error() }
+
+// Unwrap returns why the packet could not be decoded.
+func (e *DecodeError) Unwrap() error { return e.Err }
 
 // maxFreePackets is how many released packets of one ID a Conn keeps.
 const maxFreePackets = 64
