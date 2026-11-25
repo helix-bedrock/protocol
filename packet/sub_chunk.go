@@ -16,7 +16,6 @@ type SubChunk struct {
 	SubChunkEntries []protocol.SubChunkEntry
 }
 
-// ID ...
 func (*SubChunk) ID() uint32 {
 	return IDSubChunk
 }

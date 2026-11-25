@@ -13,7 +13,6 @@ type DeathInfo struct {
 	Messages []string
 }
 
-// ID ...
 func (*DeathInfo) ID() uint32 {
 	return IDDeathInfo
 }

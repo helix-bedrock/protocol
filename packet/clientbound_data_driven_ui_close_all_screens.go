@@ -11,7 +11,6 @@ type ClientBoundDataDrivenUICloseScreen struct {
 	FormID protocol.Optional[uint32]
 }
 
-// ID ...
 func (*ClientBoundDataDrivenUICloseScreen) ID() uint32 {
 	return IDClientBoundDataDrivenUICloseScreen
 }

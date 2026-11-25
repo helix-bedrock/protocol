@@ -89,7 +89,6 @@ type ShapeData interface {
 // If no shape has ever been set, then use the default one.
 type LastShape struct{}
 
-// Marshal ...
 func (shape *LastShape) Marshal(io IO) {}
 
 // LineShape represents a line debug shape.
@@ -98,7 +97,6 @@ type LineShape struct {
 	LineEndLocation mgl32.Vec3
 }
 
-// Marshal ...
 func (shape *LineShape) Marshal(io IO) {
 	io.Vec3(&shape.LineEndLocation)
 }
@@ -125,7 +123,6 @@ type TextShape struct {
 	ShowBackfaceText bool
 }
 
-// Marshal ...
 func (shape *TextShape) Marshal(io IO) {
 	io.String(&shape.Text)
 	io.Bool(&shape.UseRotation)
@@ -142,7 +139,6 @@ type BoxShape struct {
 	BoxBound mgl32.Vec3
 }
 
-// Marshal ...
 func (shape *BoxShape) Marshal(io IO) {
 	io.Vec3(&shape.BoxBound)
 }
@@ -153,7 +149,6 @@ type SphereShape struct {
 	Segments byte
 }
 
-// Marshal ...
 func (shape *SphereShape) Marshal(io IO) {
 	io.Uint8(&shape.Segments)
 }
@@ -170,7 +165,6 @@ type ArrowShape struct {
 	Segments Optional[byte]
 }
 
-// Marshal ...
 func (shape *ArrowShape) Marshal(io IO) {
 	OptionalFunc(io, &shape.ArrowEndLocation, io.Vec3)
 	OptionalFunc(io, &shape.ArrowHeadLength, io.Float32)
@@ -190,7 +184,6 @@ type CylinderShape struct {
 	NumSegments byte
 }
 
-// Marshal ...
 func (shape *CylinderShape) Marshal(io IO) {
 	io.Vec2(&shape.RadiusX)
 	io.Vec2(&shape.RadiusZ)
@@ -208,7 +201,6 @@ type PyramidShape struct {
 	Height float32
 }
 
-// Marshal ...
 func (shape *PyramidShape) Marshal(io IO) {
 	io.Float32(&shape.Width)
 	OptionalFunc(io, &shape.Depth, io.Float32)
@@ -223,7 +215,6 @@ type EllipsoidShape struct {
 	SegmentsPerAxis byte
 }
 
-// Marshal ...
 func (shape *EllipsoidShape) Marshal(io IO) {
 	io.Vec3(&shape.Radii)
 	io.Uint8(&shape.SegmentsPerAxis)
@@ -239,7 +230,6 @@ type ConeShape struct {
 	NumSegments byte
 }
 
-// Marshal ...
 func (shape *ConeShape) Marshal(io IO) {
 	io.Vec2(&shape.Radii)
 	io.Float32(&shape.Height)
@@ -288,7 +278,6 @@ type PrimitiveShape struct {
 	ExtraShapeData ShapeData
 }
 
-// Marshal ...
 func (x *PrimitiveShape) Marshal(io IO) {
 	io.Varuint64(&x.NetworkID)
 	OptionalFunc(io, &x.Type, io.Uint8)

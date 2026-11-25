@@ -54,9 +54,7 @@ type StructureSettings struct {
 	// Mirror specifies the way the structure should be mirrored. It is either no mirror at all, mirror on the
 	// x/z axis or both.
 	Mirror byte
-	// AnimationMode ...
 	AnimationMode byte
-	// AnimationDuration ...
 	AnimationDuration float32
 	// Integrity is usually 1, but may be set to a number between 0 and 1 to omit blocks randomly, using
 	// the Seed that follows.

@@ -19,7 +19,6 @@ type ContainerClose struct {
 	ServerSide bool
 }
 
-// ID ...
 func (*ContainerClose) ID() uint32 {
 	return IDContainerClose
 }

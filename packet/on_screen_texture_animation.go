@@ -12,7 +12,6 @@ type OnScreenTextureAnimation struct {
 	AnimationType uint32
 }
 
-// ID ...
 func (*OnScreenTextureAnimation) ID() uint32 {
 	return IDOnScreenTextureAnimation
 }

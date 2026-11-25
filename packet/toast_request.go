@@ -11,7 +11,6 @@ type ToastRequest struct {
 	Message string
 }
 
-// ID ...
 func (*ToastRequest) ID() uint32 {
 	return IDToastRequest
 }

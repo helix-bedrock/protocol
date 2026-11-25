@@ -8,7 +8,6 @@ type TickingAreasLoadStatus struct {
 	Preload bool
 }
 
-// ID ...
 func (*TickingAreasLoadStatus) ID() uint32 {
 	return IDTickingAreasLoadStatus
 }

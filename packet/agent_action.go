@@ -36,7 +36,6 @@ type AgentAction struct {
 	Response []byte
 }
 
-// ID ...
 func (*AgentAction) ID() uint32 {
 	return IDAgentAction
 }

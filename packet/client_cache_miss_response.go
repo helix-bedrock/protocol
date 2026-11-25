@@ -13,7 +13,6 @@ type ClientCacheMissResponse struct {
 	Blobs []protocol.CacheBlob
 }
 
-// ID ...
 func (pk *ClientCacheMissResponse) ID() uint32 {
 	return IDClientCacheMissResponse
 }

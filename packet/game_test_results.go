@@ -15,7 +15,6 @@ type GameTestResults struct {
 	Error string
 }
 
-// ID ...
 func (pk *GameTestResults) ID() uint32 {
 	return IDGameTestResults
 }

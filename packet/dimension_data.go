@@ -12,7 +12,6 @@ type DimensionData struct {
 	Definitions []protocol.DimensionDefinition
 }
 
-// ID ...
 func (*DimensionData) ID() uint32 {
 	return IDDimensionData
 }

@@ -11,7 +11,6 @@ type AddBehaviourTree struct {
 	BehaviourTree string
 }
 
-// ID ...
 func (*AddBehaviourTree) ID() uint32 {
 	return IDAddBehaviourTree
 }

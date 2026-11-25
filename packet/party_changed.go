@@ -9,7 +9,6 @@ type PartyChanged struct {
 	PartyInfo protocol.Optional[PartyInfo]
 }
 
-// ID ...
 func (*PartyChanged) ID() uint32 {
 	return IDPartyChanged
 }

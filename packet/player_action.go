@@ -24,7 +24,6 @@ type PlayerAction struct {
 	BlockFace int32
 }
 
-// ID ...
 func (*PlayerAction) ID() uint32 {
 	return IDPlayerAction
 }

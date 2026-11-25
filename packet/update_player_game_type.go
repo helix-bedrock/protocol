@@ -18,7 +18,6 @@ type UpdatePlayerGameType struct {
 	Tick uint64
 }
 
-// ID ...
 func (*UpdatePlayerGameType) ID() uint32 {
 	return IDUpdatePlayerGameType
 }

@@ -139,17 +139,14 @@ func (c flateCompression) levelOf() int {
 	return int(c.level)
 }
 
-// EncodeCompression ...
 func (nopCompression) EncodeCompression() uint16 {
 	return CompressionAlgorithmNone
 }
 
-// Compress ...
 func (nopCompression) Compress(decompressed []byte) ([]byte, error) {
 	return decompressed, nil
 }
 
-// Decompress ...
 func (nopCompression) Decompress(compressed []byte, limit int) ([]byte, error) {
 	if len(compressed) > limit {
 		return nil, fmt.Errorf("nop decompression: size %d exceeds limit %d", len(compressed), limit)
@@ -157,12 +154,10 @@ func (nopCompression) Decompress(compressed []byte, limit int) ([]byte, error) {
 	return compressed, nil
 }
 
-// EncodeCompression ...
 func (flateCompression) EncodeCompression() uint16 {
 	return CompressionAlgorithmFlate
 }
 
-// Compress ...
 func (c flateCompression) Compress(decompressed []byte) ([]byte, error) {
 	return c.CompressAppend(nil, decompressed)
 }
@@ -196,7 +191,6 @@ func (flateCompression) MaxCompressedLen(decompressedLen int) int {
 // flateOverhead is room for flate's block headers and end.
 const flateOverhead = 64
 
-// Decompress ...
 func (c flateCompression) Decompress(compressed []byte, limit int) ([]byte, error) {
 	pooled := getDecompressBuffer()
 	defer putDecompressBuffer(pooled)
@@ -246,12 +240,10 @@ func (flateCompression) DecompressAppend(dst, compressed []byte, limit int) ([]b
 	return decompressed, nil
 }
 
-// EncodeCompression ...
 func (snappyCompression) EncodeCompression() uint16 {
 	return CompressionAlgorithmSnappy
 }
 
-// Compress ...
 func (snappyCompression) Compress(decompressed []byte) ([]byte, error) {
 	// Use the fast Snappy-compatible S2 encoder. The snappy.Encode wrapper uses
 	// EncodeSnappyBetter, which trades more CPU and retained scratch memory for a
@@ -276,7 +268,6 @@ func (snappyCompression) MaxCompressedLen(decompressedLen int) int {
 	return s2.MaxEncodedLen(decompressedLen)
 }
 
-// Decompress ...
 func (c snappyCompression) Decompress(compressed []byte, limit int) ([]byte, error) {
 	return c.DecompressAppend(nil, compressed, limit)
 }

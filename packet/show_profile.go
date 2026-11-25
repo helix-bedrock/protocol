@@ -11,7 +11,6 @@ type ShowProfile struct {
 	XUID string
 }
 
-// ID ...
 func (*ShowProfile) ID() uint32 {
 	return IDShowProfile
 }

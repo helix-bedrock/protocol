@@ -12,7 +12,6 @@ type PlayerFog struct {
 	Stack []string
 }
 
-// ID ...
 func (*PlayerFog) ID() uint32 {
 	return IDPlayerFog
 }

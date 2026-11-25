@@ -57,14 +57,12 @@ type AdventureSettings struct {
 	// PermissionLevel is the permission level of the player as it shows up in the player list built up using
 	// the PlayerList packet. It is one of the PermissionLevel constants above.
 	PermissionLevel uint32
-	// CustomStoredPermissions ...
 	CustomStoredPermissions uint32
 	// PlayerUniqueID is a unique identifier of the player. This must be filled out with the entity unique ID of the
 	// player.
 	PlayerUniqueID int64
 }
 
-// ID ...
 func (*AdventureSettings) ID() uint32 {
 	return IDAdventureSettings
 }

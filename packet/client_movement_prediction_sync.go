@@ -40,7 +40,6 @@ type ClientMovementPredictionSync struct {
 	Flying bool
 }
 
-// ID ...
 func (*ClientMovementPredictionSync) ID() uint32 {
 	return IDClientMovementPredictionSync
 }

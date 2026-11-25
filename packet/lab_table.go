@@ -25,7 +25,6 @@ type LabTable struct {
 	ReactionType byte
 }
 
-// ID ...
 func (*LabTable) ID() uint32 {
 	return IDLabTable
 }

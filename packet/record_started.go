@@ -14,7 +14,6 @@ type RecordStarted struct {
 	Handle uint64
 }
 
-// ID ...
 func (*RecordStarted) ID() uint32 {
 	return IDRecordStarted
 }

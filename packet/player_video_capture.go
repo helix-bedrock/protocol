@@ -24,7 +24,6 @@ type PlayerVideoCapture struct {
 	FilePrefix string
 }
 
-// ID ...
 func (*PlayerVideoCapture) ID() uint32 {
 	return IDPlayerVideoCapture
 }

@@ -15,7 +15,6 @@ type TrimData struct {
 	Materials []protocol.TrimMaterial
 }
 
-// ID ...
 func (*TrimData) ID() uint32 {
 	return IDTrimData
 }

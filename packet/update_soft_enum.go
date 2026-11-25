@@ -28,7 +28,6 @@ type UpdateSoftEnum struct {
 	ActionType byte
 }
 
-// ID ...
 func (*UpdateSoftEnum) ID() uint32 {
 	return IDUpdateSoftEnum
 }

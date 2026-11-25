@@ -13,7 +13,6 @@ type ClientboundStonecutterSetRecipe struct {
 	RecipeIndex int32
 }
 
-// ID ...
 func (*ClientboundStonecutterSetRecipe) ID() uint32 {
 	return IDClientboundStonecutterSetRecipe
 }

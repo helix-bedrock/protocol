@@ -11,7 +11,6 @@ type PartyDestinationCookieResponse struct {
 	Accepted bool
 }
 
-// ID ...
 func (*PartyDestinationCookieResponse) ID() uint32 {
 	return IDPartyDestinationCookieResponse
 }

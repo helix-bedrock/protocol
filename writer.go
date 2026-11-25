@@ -66,7 +66,6 @@ func (w *Writer) Bool(x *bool) {
 	_ = w.w.WriteByte(*(*byte)(unsafe.Pointer(x)))
 }
 
-// StringUTF ...
 func (w *Writer) StringUTF(x *string) {
 	l := int16(len(*x))
 	w.Int16(&l)

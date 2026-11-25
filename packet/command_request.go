@@ -21,7 +21,6 @@ type CommandRequest struct {
 	Version string
 }
 
-// ID ...
 func (*CommandRequest) ID() uint32 {
 	return IDCommandRequest
 }

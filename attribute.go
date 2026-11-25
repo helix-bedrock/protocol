@@ -76,10 +76,8 @@ type AttributeModifier struct {
 	// Operation is the operation that is performed on the attribute. It can be addition, multiply base, multiply total
 	// or cap.
 	Operation int32
-	// Operand ...
 	// TODO: Figure out what this field is used for.
 	Operand int32
-	// Serializable ...
 	// TODO: Figure out what this field is used for.
 	Serializable bool
 }

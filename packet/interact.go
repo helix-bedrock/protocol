@@ -29,7 +29,6 @@ type Interact struct {
 	Position protocol.Optional[mgl32.Vec3]
 }
 
-// ID ...
 func (*Interact) ID() uint32 {
 	return IDInteract
 }

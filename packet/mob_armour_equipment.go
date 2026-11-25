@@ -25,7 +25,6 @@ type MobArmourEquipment struct {
 	Body protocol.ItemInstance
 }
 
-// ID ...
 func (*MobArmourEquipment) ID() uint32 {
 	return IDMobArmourEquipment
 }

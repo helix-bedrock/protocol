@@ -15,7 +15,6 @@ type SubChunkRequest struct {
 	Position protocol.SubChunkPos
 }
 
-// ID ...
 func (*SubChunkRequest) ID() uint32 {
 	return IDSubChunkRequest
 }

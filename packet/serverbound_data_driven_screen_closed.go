@@ -20,7 +20,6 @@ type ServerBoundDataDrivenScreenClosed struct {
 	CloseReason string
 }
 
-// ID ...
 func (*ServerBoundDataDrivenScreenClosed) ID() uint32 {
 	return IDServerBoundDataDrivenScreenClosed
 }

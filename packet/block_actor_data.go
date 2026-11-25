@@ -17,7 +17,6 @@ type BlockActorData struct {
 	NBTData map[string]any
 }
 
-// ID ...
 func (*BlockActorData) ID() uint32 {
 	return IDBlockActorData
 }

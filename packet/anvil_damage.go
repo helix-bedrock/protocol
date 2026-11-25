@@ -11,7 +11,6 @@ type AnvilDamage struct {
 	AnvilPosition protocol.BlockPos
 }
 
-// ID ...
 func (*AnvilDamage) ID() uint32 {
 	return IDAnvilDamage
 }

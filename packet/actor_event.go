@@ -92,7 +92,6 @@ type ActorEvent struct {
 	FireAtPosition protocol.Optional[mgl32.Vec3]
 }
 
-// ID ...
 func (*ActorEvent) ID() uint32 {
 	return IDActorEvent
 }

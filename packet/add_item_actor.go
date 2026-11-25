@@ -33,7 +33,6 @@ type AddItemActor struct {
 	FromFishing bool
 }
 
-// ID ...
 func (*AddItemActor) ID() uint32 {
 	return IDAddItemActor
 }

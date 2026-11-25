@@ -12,7 +12,6 @@ type ClientCheatAbility struct {
 	AbilityData protocol.AbilityData
 }
 
-// ID ...
 func (*ClientCheatAbility) ID() uint32 {
 	return IDClientCheatAbility
 }

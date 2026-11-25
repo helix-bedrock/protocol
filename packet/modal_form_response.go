@@ -24,7 +24,6 @@ type ModalFormResponse struct {
 	CancelReason protocol.Optional[uint8]
 }
 
-// ID ...
 func (*ModalFormResponse) ID() uint32 {
 	return IDModalFormResponse
 }

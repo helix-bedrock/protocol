@@ -31,7 +31,6 @@ type NetworkSettings struct {
 	ClientThrottleScalar float32
 }
 
-// ID ...
 func (*NetworkSettings) ID() uint32 {
 	return IDNetworkSettings
 }

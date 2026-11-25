@@ -44,7 +44,6 @@ type SetPlayerInventoryOptions struct {
 	CraftingLayout int32
 }
 
-// ID ...
 func (*SetPlayerInventoryOptions) ID() uint32 {
 	return IDSetPlayerInventoryOptions
 }

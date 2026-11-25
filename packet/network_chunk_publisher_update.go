@@ -19,12 +19,10 @@ type NetworkChunkPublisherUpdate struct {
 	// Unlike the RequestChunkRadius and ChunkRadiusUpdated packets, this radius is in blocks rather than
 	// chunks, so the chunk radius needs to be multiplied by 16. (Or shifted to the left by 4.)
 	Radius uint32
-	// SavedChunks ...
 	// TODO: Figure out what this field is used for.
 	SavedChunks []protocol.ChunkPos
 }
 
-// ID ...
 func (*NetworkChunkPublisherUpdate) ID() uint32 {
 	return IDNetworkChunkPublisherUpdate
 }

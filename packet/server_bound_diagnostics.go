@@ -44,7 +44,6 @@ type ServerBoundDiagnostics struct {
 	WhiskerScopes []protocol.WhiskerScopeDataSummary
 }
 
-// ID ...
 func (*ServerBoundDiagnostics) ID() uint32 {
 	return IDServerBoundDiagnostics
 }

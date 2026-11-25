@@ -10,14 +10,12 @@ type Event struct {
 	// EntityRuntimeID is the runtime ID of the player. The runtime ID is unique for each world session, and
 	// entities are generally identified in packets using this runtime ID.
 	EntityRuntimeID int64
-	// UsePlayerID ...
 	// TODO: Figure out what UsePlayerID is for.
 	UsePlayerID bool
 	// Event is the event that is transmitted.
 	Event protocol.Event
 }
 
-// ID ...
 func (*Event) ID() uint32 {
 	return IDEvent
 }

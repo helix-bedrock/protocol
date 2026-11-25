@@ -17,7 +17,6 @@ type Transfer struct {
 	GatheringJoinInfo protocol.Optional[protocol.GatheringJoinInfo]
 }
 
-// ID ...
 func (*Transfer) ID() uint32 {
 	return IDTransfer
 }

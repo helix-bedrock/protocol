@@ -23,7 +23,6 @@ type PositionTrackingDBClientRequest struct {
 	TrackingID int32
 }
 
-// ID ...
 func (*PositionTrackingDBClientRequest) ID() uint32 {
 	return IDPositionTrackingDBClientRequest
 }

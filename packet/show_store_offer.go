@@ -25,7 +25,6 @@ type ShowStoreOffer struct {
 	Type byte
 }
 
-// ID ...
 func (*ShowStoreOffer) ID() uint32 {
 	return IDShowStoreOffer
 }

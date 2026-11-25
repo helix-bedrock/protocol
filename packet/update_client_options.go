@@ -20,7 +20,6 @@ type UpdateClientOptions struct {
 	FilterProfanity protocol.Optional[bool]
 }
 
-// ID ...
 func (*UpdateClientOptions) ID() uint32 {
 	return IDUpdateClientOptions
 }

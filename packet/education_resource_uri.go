@@ -8,7 +8,6 @@ type EducationResourceURI struct {
 	Resource protocol.EducationSharedResourceURI
 }
 
-// ID ...
 func (*EducationResourceURI) ID() uint32 {
 	return IDEducationResourceURI
 }

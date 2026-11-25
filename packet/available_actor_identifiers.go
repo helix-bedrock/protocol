@@ -12,7 +12,6 @@ type AvailableActorIdentifiers struct {
 	SerialisedEntityIdentifiers []byte
 }
 
-// ID ...
 func (*AvailableActorIdentifiers) ID() uint32 {
 	return IDAvailableActorIdentifiers
 }

@@ -22,7 +22,6 @@ type UnlockedRecipes struct {
 	Recipes []string
 }
 
-// ID ...
 func (*UnlockedRecipes) ID() uint32 {
 	return IDUnlockedRecipes
 }

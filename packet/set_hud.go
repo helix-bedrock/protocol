@@ -35,7 +35,6 @@ type SetHud struct {
 	Visibility int32
 }
 
-// ID ...
 func (*SetHud) ID() uint32 {
 	return IDSetHud
 }

@@ -18,7 +18,6 @@ type EmoteList struct {
 	EmotePieces []uuid.UUID
 }
 
-// ID ...
 func (*EmoteList) ID() uint32 {
 	return IDEmoteList
 }

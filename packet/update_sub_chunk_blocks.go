@@ -12,7 +12,6 @@ type UpdateSubChunkBlocks struct {
 	Extra []protocol.BlockChangeEntry
 }
 
-// ID ...
 func (*UpdateSubChunkBlocks) ID() uint32 {
 	return IDUpdateSubChunkBlocks
 }

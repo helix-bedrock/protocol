@@ -11,7 +11,6 @@ type ServerPlayerPostMovePosition struct {
 	Position mgl32.Vec3
 }
 
-// ID ...
 func (*ServerPlayerPostMovePosition) ID() uint32 {
 	return IDServerPlayerPostMovePosition
 }

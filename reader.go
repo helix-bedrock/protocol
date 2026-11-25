@@ -78,7 +78,6 @@ func (r *Reader) Bool(x *bool) {
 // errStringTooLong is an error set if a string decoded using the String method has a length that is too long.
 var errStringTooLong = errors.New("string length overflows a 32-bit integer")
 
-// StringUTF ...
 func (r *Reader) StringUTF(x *string) {
 	var length int16
 	r.Int16(&length)

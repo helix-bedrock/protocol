@@ -15,7 +15,6 @@ type ItemStackResponse struct {
 	Responses []protocol.ItemStackResponse
 }
 
-// ID ...
 func (*ItemStackResponse) ID() uint32 {
 	return IDItemStackResponse
 }

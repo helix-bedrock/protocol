@@ -13,7 +13,6 @@ type DebugInfo struct {
 	Data []byte
 }
 
-// ID ...
 func (*DebugInfo) ID() uint32 {
 	return IDDebugInfo
 }

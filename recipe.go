@@ -72,7 +72,6 @@ type RecipeUnlockRequirement struct {
 	Ingredients []ItemDescriptorCount
 }
 
-// Marshal ...
 func (x *RecipeUnlockRequirement) Marshal(r IO) {
 	r.Varint32(&x.Context)
 	present := x.Context == RecipeUnlockContextNone
@@ -106,7 +105,6 @@ type ShapelessRecipe struct {
 	// - smoker
 	// - campfire
 	Block string
-	// Priority ...
 	Priority          int32
 	UnlockRequirement Optional[RecipeUnlockRequirement]
 	// RecipeNetworkID is a unique ID used to identify the recipe over network. Each recipe must have a unique
@@ -149,7 +147,6 @@ type ShapedRecipe struct {
 	// Block is the block name that is required to craft the output of the recipe. The block is not prefixed
 	// with 'minecraft:', so it will look like 'crafting_table' as an example.
 	Block string
-	// Priority ...
 	Priority int32
 	// AssumeSymmetry specifies if the recipe is symmetrical. If this is set to true, the recipe will be
 	// mirrored along the diagonal axis. This means that the recipe will be the same if rotated 180 degrees.
@@ -220,38 +217,31 @@ type SmithingTrimRecipe struct {
 	Block string
 }
 
-// Marshal ...
 func (recipe *ShapelessRecipe) Marshal(r IO) {
 	marshalShapeless(r, recipe)
 }
 
-// Marshal ...
 func (recipe *UserDataShapelessRecipe) Marshal(r IO) {
 	marshalShapeless(r, &recipe.ShapelessRecipe)
 }
 
-// Marshal ...
 func (recipe *ShapelessChemistryRecipe) Marshal(r IO) {
 	marshalShapeless(r, &recipe.ShapelessRecipe)
 }
 
-// Marshal ...
 func (recipe *ShapedRecipe) Marshal(r IO) {
 	marshalShaped(r, recipe)
 }
 
-// Marshal ...
 func (recipe *ShapedChemistryRecipe) Marshal(r IO) {
 	marshalShaped(r, &recipe.ShapedRecipe)
 }
 
-// Marshal ...
 func (recipe *MultiRecipe) Marshal(r IO) {
 	r.UUID(&recipe.UUID)
 	r.Varuint32(&recipe.RecipeNetworkID)
 }
 
-// Marshal ...
 func (recipe *SmithingTransformRecipe) Marshal(r IO) {
 	r.String(&recipe.RecipeID)
 	r.ItemDescriptorCount(&recipe.Template)
@@ -262,7 +252,6 @@ func (recipe *SmithingTransformRecipe) Marshal(r IO) {
 	r.Varuint32(&recipe.RecipeNetworkID)
 }
 
-// Marshal ...
 func (recipe *SmithingTrimRecipe) Marshal(r IO) {
 	r.String(&recipe.RecipeID)
 	r.ItemDescriptorCount(&recipe.Template)

@@ -38,7 +38,6 @@ type UpdateTrade struct {
 	SerialisedOffers []byte
 }
 
-// ID ...
 func (*UpdateTrade) ID() uint32 {
 	return IDUpdateTrade
 }

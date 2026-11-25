@@ -21,7 +21,6 @@ type SetActorData struct {
 	Tick uint64
 }
 
-// ID ...
 func (*SetActorData) ID() uint32 {
 	return IDSetActorData
 }

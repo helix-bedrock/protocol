@@ -18,7 +18,6 @@ type MotionPredictionHints struct {
 	OnGround bool
 }
 
-// ID ...
 func (*MotionPredictionHints) ID() uint32 {
 	return IDMotionPredictionHints
 }

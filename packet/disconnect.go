@@ -175,7 +175,6 @@ type Disconnect struct {
 	FilteredMessage string
 }
 
-// ID ...
 func (*Disconnect) ID() uint32 {
 	return IDDisconnect
 }

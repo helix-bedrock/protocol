@@ -11,7 +11,6 @@ type ClientboundUpdateSoundData struct {
 	Update protocol.SoundDataUpdate
 }
 
-// ID ...
 func (*ClientboundUpdateSoundData) ID() uint32 {
 	return IDClientboundUpdateSoundData
 }

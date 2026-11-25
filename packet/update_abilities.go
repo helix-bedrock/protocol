@@ -11,7 +11,6 @@ type UpdateAbilities struct {
 	AbilityData protocol.AbilityData
 }
 
-// ID ...
 func (*UpdateAbilities) ID() uint32 {
 	return IDUpdateAbilities
 }

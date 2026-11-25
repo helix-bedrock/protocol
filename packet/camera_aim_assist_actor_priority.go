@@ -10,7 +10,6 @@ type CameraAimAssistActorPriority struct {
 	PriorityData []protocol.CameraAimAssistActorPriorityData
 }
 
-// ID ...
 func (*CameraAimAssistActorPriority) ID() uint32 {
 	return IDCameraAimAssistActorPriority
 }

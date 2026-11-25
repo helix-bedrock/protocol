@@ -26,7 +26,6 @@ type CameraInstruction struct {
 	DetachFromEntity protocol.Optional[bool]
 }
 
-// ID ...
 func (*CameraInstruction) ID() uint32 {
 	return IDCameraInstruction
 }

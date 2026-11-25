@@ -24,7 +24,6 @@ type PlayStatus struct {
 	Status int32
 }
 
-// ID ...
 func (*PlayStatus) ID() uint32 {
 	return IDPlayStatus
 }

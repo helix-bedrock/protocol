@@ -28,7 +28,6 @@ type CameraShake struct {
 	Action uint8
 }
 
-// ID ...
 func (*CameraShake) ID() uint32 {
 	return IDCameraShake
 }

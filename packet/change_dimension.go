@@ -35,7 +35,6 @@ type ChangeDimension struct {
 	LoadingScreenID protocol.Optional[uint32]
 }
 
-// ID ...
 func (*ChangeDimension) ID() uint32 {
 	return IDChangeDimension
 }

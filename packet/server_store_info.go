@@ -11,7 +11,6 @@ type ServerStoreInfo struct {
 	StoreInfo protocol.Optional[protocol.StoreEntryPointInfo]
 }
 
-// ID ...
 func (*ServerStoreInfo) ID() uint32 {
 	return IDServerStoreInfo
 }

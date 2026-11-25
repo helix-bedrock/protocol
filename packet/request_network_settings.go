@@ -11,7 +11,6 @@ type RequestNetworkSettings struct {
 	ClientProtocol int32
 }
 
-// ID ...
 func (pk *RequestNetworkSettings) ID() uint32 {
 	return IDRequestNetworkSettings
 }

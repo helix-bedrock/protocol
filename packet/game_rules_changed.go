@@ -15,7 +15,6 @@ type GameRulesChanged struct {
 	GameRules []protocol.GameRule
 }
 
-// ID ...
 func (*GameRulesChanged) ID() uint32 {
 	return IDGameRulesChanged
 }

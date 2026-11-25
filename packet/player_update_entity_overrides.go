@@ -29,7 +29,6 @@ type PlayerUpdateEntityOverrides struct {
 	FloatValue float32
 }
 
-// ID ...
 func (*PlayerUpdateEntityOverrides) ID() uint32 {
 	return IDPlayerUpdateEntityOverrides
 }

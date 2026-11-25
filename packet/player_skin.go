@@ -21,7 +21,6 @@ type PlayerSkin struct {
 	OldSkinName string
 }
 
-// ID ...
 func (*PlayerSkin) ID() uint32 {
 	return IDPlayerSkin
 }

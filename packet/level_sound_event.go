@@ -620,7 +620,6 @@ type LevelSoundEvent struct {
 	FireAtPosition protocol.Optional[mgl32.Vec3]
 }
 
-// ID ...
 func (*LevelSoundEvent) ID() uint32 {
 	return IDLevelSoundEvent
 }

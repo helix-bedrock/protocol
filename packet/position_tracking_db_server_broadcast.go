@@ -44,7 +44,6 @@ type PositionTrackingDBServerBroadcast struct {
 	Payload map[string]any
 }
 
-// ID ...
 func (*PositionTrackingDBServerBroadcast) ID() uint32 {
 	return IDPositionTrackingDBServerBroadcast
 }

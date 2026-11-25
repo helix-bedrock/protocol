@@ -18,7 +18,6 @@ type ServerSettingsResponse struct {
 	FormData []byte
 }
 
-// ID ...
 func (*ServerSettingsResponse) ID() uint32 {
 	return IDServerSettingsResponse
 }

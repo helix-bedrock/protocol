@@ -17,7 +17,6 @@ type SpawnExperienceOrb struct {
 	ExperienceAmount int32
 }
 
-// ID ...
 func (*SpawnExperienceOrb) ID() uint32 {
 	return IDSpawnExperienceOrb
 }

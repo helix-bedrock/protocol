@@ -46,7 +46,6 @@ type BookEdit struct {
 	XUID string
 }
 
-// ID ...
 func (*BookEdit) ID() uint32 {
 	return IDBookEdit
 }

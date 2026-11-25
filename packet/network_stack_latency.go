@@ -17,7 +17,6 @@ type NetworkStackLatency struct {
 	NeedsResponse bool
 }
 
-// ID ...
 func (*NetworkStackLatency) ID() uint32 {
 	return IDNetworkStackLatency
 }

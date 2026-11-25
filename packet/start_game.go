@@ -130,7 +130,6 @@ type StartGame struct {
 	// LightningLevel is the level specifying the intensity of the thunder. This may actually be set
 	// independently from the RainLevel, meaning dark clouds can be produced without rain.
 	LightningLevel float32
-	// ConfirmedPlatformLockedContent ...
 	ConfirmedPlatformLockedContent bool
 	// MultiPlayerGame specifies if the world is a multi-player game. This should always be set to true for
 	// servers.
@@ -228,7 +227,6 @@ type StartGame struct {
 	// Trial specifies if the world was a trial world, meaning features are limited and there is a time limit
 	// on the world.
 	Trial bool
-	// PlayerMovementSettings ...
 	PlayerMovementSettings protocol.PlayerMovementSettings
 	// Time is the total time that has elapsed since the start of the world.
 	Time int64
@@ -281,7 +279,6 @@ type StartGame struct {
 	OwnerID string
 }
 
-// ID ...
 func (*StartGame) ID() uint32 {
 	return IDStartGame
 }

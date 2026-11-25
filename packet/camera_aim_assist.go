@@ -29,7 +29,6 @@ type CameraAimAssist struct {
 	ShowDebugRender bool
 }
 
-// ID ...
 func (*CameraAimAssist) ID() uint32 {
 	return IDCameraAimAssist
 }

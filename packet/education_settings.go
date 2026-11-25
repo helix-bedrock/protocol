@@ -15,23 +15,17 @@ type EducationSettings struct {
 	// CanResizeCodeBuilder specifies if clients connected to the world should be able to resize the code
 	// builder when it is opened.
 	CanResizeCodeBuilder bool
-	// DisableLegacyTitleBar ...
 	DisableLegacyTitleBar bool
-	// PostProcessFilter ...
 	PostProcessFilter string
-	// ScreenshotBorderPath ...
 	ScreenshotBorderPath string
 	// AgentCapabilities holds what the Code Builder agent is allowed to do.
 	AgentCapabilities protocol.Optional[protocol.EducationAgentCapabilities]
-	// OverrideURI ...
 	OverrideURI protocol.Optional[string]
 	// HasQuiz specifies if the world has a quiz connected to it.
 	HasQuiz bool
-	// ExternalLinkSettings ...
 	ExternalLinkSettings protocol.Optional[protocol.EducationExternalLinkSettings]
 }
 
-// ID ...
 func (*EducationSettings) ID() uint32 {
 	return IDEducationSettings
 }

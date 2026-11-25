@@ -21,7 +21,6 @@ type BlockEvent struct {
 	EventData int32
 }
 
-// ID ...
 func (*BlockEvent) ID() uint32 {
 	return IDBlockEvent
 }

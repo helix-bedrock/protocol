@@ -15,7 +15,6 @@ type SimulationType struct {
 	SimulationType byte
 }
 
-// ID ...
 func (*SimulationType) ID() uint32 {
 	return IDSimulationType
 }

@@ -17,7 +17,6 @@ type StopSound struct {
 	StopMusicLegacy bool
 }
 
-// ID ...
 func (*StopSound) ID() uint32 {
 	return IDStopSound
 }

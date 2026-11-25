@@ -14,7 +14,6 @@ type ScriptMessage struct {
 	Data []byte
 }
 
-// ID ...
 func (pk *ScriptMessage) ID() uint32 {
 	return IDScriptMessage
 }

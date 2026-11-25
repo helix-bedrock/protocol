@@ -14,7 +14,6 @@ type ItemRegistry struct {
 	Items []protocol.ItemEntry
 }
 
-// ID ...
 func (*ItemRegistry) ID() uint32 {
 	return IDItemRegistry
 }

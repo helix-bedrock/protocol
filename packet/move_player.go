@@ -51,7 +51,6 @@ type MovePlayer struct {
 	Tick uint64
 }
 
-// ID ...
 func (*MovePlayer) ID() uint32 {
 	return IDMovePlayer
 }

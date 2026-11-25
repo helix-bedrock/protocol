@@ -22,7 +22,6 @@ type ClientBoundAttributeLayerSync struct {
 	RemoveAttributeNames []string
 }
 
-// ID ...
 func (*ClientBoundAttributeLayerSync) ID() uint32 {
 	return IDClientBoundAttributeLayerSync
 }

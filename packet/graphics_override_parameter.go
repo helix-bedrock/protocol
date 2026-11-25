@@ -23,7 +23,6 @@ type GraphicsOverrideParameter struct {
 	Reset bool
 }
 
-// ID ...
 func (*GraphicsOverrideParameter) ID() uint32 {
 	return IDGraphicsOverrideParameter
 }

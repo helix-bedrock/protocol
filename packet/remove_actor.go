@@ -13,7 +13,6 @@ type RemoveActor struct {
 	EntityUniqueID int64
 }
 
-// ID ...
 func (*RemoveActor) ID() uint32 {
 	return IDRemoveActor
 }

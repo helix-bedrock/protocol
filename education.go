@@ -15,7 +15,6 @@ func (x *EducationSharedResourceURI) Marshal(r IO) {
 	r.String(&x.LinkURI)
 }
 
-// EducationExternalLinkSettings ...
 type EducationExternalLinkSettings struct {
 	// URL is the external link URL.
 	URL string

@@ -14,7 +14,6 @@ type AgentAnimation struct {
 	EntityRuntimeID uint64
 }
 
-// ID ...
 func (*AgentAnimation) ID() uint32 {
 	return IDAgentAnimation
 }

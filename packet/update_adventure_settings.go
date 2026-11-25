@@ -20,7 +20,6 @@ type UpdateAdventureSettings struct {
 	AutoJump bool
 }
 
-// ID ...
 func (*UpdateAdventureSettings) ID() uint32 {
 	return IDUpdateAdventureSettings
 }

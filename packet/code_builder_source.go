@@ -38,7 +38,6 @@ type CodeBuilderSource struct {
 	CodeStatus byte
 }
 
-// ID ...
 func (pk *CodeBuilderSource) ID() uint32 {
 	return IDCodeBuilderSource
 }

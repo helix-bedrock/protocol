@@ -44,7 +44,6 @@ type Skin struct {
 	SkinGeometry []byte
 	// TODO: Find out what value AnimationData holds and when it does hold something.
 	AnimationData []byte
-	// GeometryDataEngineVersion ...
 	GeometryDataEngineVersion []byte
 	// PremiumSkin specifies if this is a skin that was purchased from the marketplace.
 	PremiumSkin bool
@@ -53,7 +52,6 @@ type Skin struct {
 	// PersonaCapeOnClassicSkin specifies if the skin had a Persona cape (in-game skin creator cape) equipped
 	// on a classic skin.
 	PersonaCapeOnClassicSkin bool
-	// PrimaryUser ...
 	PrimaryUser bool
 	// CapeID is a unique identifier that identifies the cape. It usually holds a UUID in it.
 	CapeID string

@@ -37,7 +37,6 @@ type LevelChunk struct {
 	ClientBiomeUpdate bool
 }
 
-// ID ...
 func (*LevelChunk) ID() uint32 {
 	return IDLevelChunk
 }

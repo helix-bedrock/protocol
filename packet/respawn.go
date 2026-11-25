@@ -27,7 +27,6 @@ type Respawn struct {
 	EntityRuntimeID uint64
 }
 
-// ID ...
 func (*Respawn) ID() uint32 {
 	return IDRespawn
 }

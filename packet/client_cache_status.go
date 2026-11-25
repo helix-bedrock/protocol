@@ -13,7 +13,6 @@ type ClientCacheStatus struct {
 	Enabled bool
 }
 
-// ID ...
 func (pk *ClientCacheStatus) ID() uint32 {
 	return IDClientCacheStatus
 }

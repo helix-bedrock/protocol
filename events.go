@@ -248,26 +248,19 @@ type AchievementAwardedEvent struct {
 	AchievementID uint8
 }
 
-// Marshal ...
 func (a *AchievementAwardedEvent) Marshal(r IO) {
 	r.Uint8(&a.AchievementID)
 }
 
 // EntityInteractEvent is the event data sent for entity interactions.
 type EntityInteractEvent struct {
-	// InteractedEntityID ...
 	InteractedEntityID int64
-	// InteractionType ...
 	InteractionType uint8
-	// InteractionEntityType ...
 	InteractionEntityType int32
-	// EntityVariant ...
 	EntityVariant int32
-	// EntityColour ...
 	EntityColour uint8
 }
 
-// Marshal ...
 func (e *EntityInteractEvent) Marshal(r IO) {
 	r.ActorUniqueID(&e.InteractedEntityID)
 	r.Uint8(&e.InteractionType)
@@ -278,24 +271,19 @@ func (e *EntityInteractEvent) Marshal(r IO) {
 
 // PortalBuiltEvent is the event data sent when a portal is built.
 type PortalBuiltEvent struct {
-	// DimensionID ...
 	DimensionID int32
 }
 
-// Marshal ...
 func (p *PortalBuiltEvent) Marshal(r IO) {
 	r.Varint32(&p.DimensionID)
 }
 
 // PortalUsedEvent is the event data sent when a portal is used.
 type PortalUsedEvent struct {
-	// FromDimensionID ...
 	FromDimensionID int32
-	// ToDimensionID ...
 	ToDimensionID int32
 }
 
-// Marshal ...
 func (p *PortalUsedEvent) Marshal(r IO) {
 	r.Varint32(&p.FromDimensionID)
 	r.Varint32(&p.ToDimensionID)
@@ -303,13 +291,9 @@ func (p *PortalUsedEvent) Marshal(r IO) {
 
 // MobKilledEvent is the event data sent when a mob is killed.
 type MobKilledEvent struct {
-	// KillerEntityUniqueID ...
 	KillerEntityUniqueID int64
-	// VictimEntityUniqueID ...
 	VictimEntityUniqueID int64
-	// KillerEntityType ...
 	KillerEntityType int32
-	// EntityDamageCause ...
 	EntityDamageCause int32
 	// VillagerTradeTier -1 if not a trading actor.
 	VillagerTradeTier int32
@@ -317,7 +301,6 @@ type MobKilledEvent struct {
 	VillagerDisplayName string
 }
 
-// Marshal ...
 func (m *MobKilledEvent) Marshal(r IO) {
 	r.ActorUniqueID(&m.KillerEntityUniqueID)
 	r.ActorUniqueID(&m.VictimEntityUniqueID)
@@ -329,15 +312,11 @@ func (m *MobKilledEvent) Marshal(r IO) {
 
 // CauldronUsedEvent is the event data sent when a cauldron is used.
 type CauldronUsedEvent struct {
-	// Colour ...
 	Colour uint32
-	// PotionID ...
 	PotionID int16
-	// FillLevel ...
 	FillLevel int16
 }
 
-// Marshal ...
 func (c *CauldronUsedEvent) Marshal(r IO) {
 	r.Varuint32(&c.Colour)
 	r.Int16(&c.PotionID)
@@ -346,17 +325,12 @@ func (c *CauldronUsedEvent) Marshal(r IO) {
 
 // PlayerDiedEvent is the event data sent when a player dies.
 type PlayerDiedEvent struct {
-	// AttackerEntityID ...
 	AttackerEntityID int32
-	// AttackerVariant ...
 	AttackerVariant int32
-	// EntityDamageCause ...
 	EntityDamageCause int32
-	// InRaid ...
 	InRaid bool
 }
 
-// Marshal ...
 func (p *PlayerDiedEvent) Marshal(r IO) {
 	r.Varint32(&p.AttackerEntityID)
 	r.Varint32(&p.AttackerVariant)
@@ -366,15 +340,11 @@ func (p *PlayerDiedEvent) Marshal(r IO) {
 
 // BossKilledEvent is the event data sent when a boss dies.
 type BossKilledEvent struct {
-	// BossEntityUniqueID ...
 	BossEntityUniqueID int64
-	// PlayerPartySize ...
 	PlayerPartySize int32
-	// InteractionEntityType ...
 	InteractionEntityType int32
 }
 
-// Marshal ...
 func (b *BossKilledEvent) Marshal(r IO) {
 	r.ActorUniqueID(&b.BossEntityUniqueID)
 	r.Varint32(&b.PlayerPartySize)
@@ -383,19 +353,13 @@ func (b *BossKilledEvent) Marshal(r IO) {
 
 // AgentCommandEvent is an event used in Education Edition.
 type AgentCommandEvent struct {
-	// AgentResult ...
 	AgentResult int32
-	// DataValue ...
 	DataValue int32
-	// Command ...
 	Command string
-	// DataKey ...
 	DataKey string
-	// Output ...
 	Output string
 }
 
-// Marshal ...
 func (a *AgentCommandEvent) Marshal(r IO) {
 	r.Varint32(&a.AgentResult)
 	r.Varint32(&a.DataValue)
@@ -407,28 +371,23 @@ func (a *AgentCommandEvent) Marshal(r IO) {
 // AgentCreatedEvent is the event data sent when an agent is created.
 type AgentCreatedEvent struct{}
 
-// Marshal ...
 func (a *AgentCreatedEvent) Marshal(r IO) {}
 
 // PatternRemovedEvent is the event data sent when a pattern is removed.
 type PatternRemovedEvent struct{}
 
-// Marshal ...
 func (p *PatternRemovedEvent) Marshal(r IO) {}
 
 // SlashCommandExecutedEvent is the event data sent when a slash command is executed.
 type SlashCommandExecutedEvent struct {
-	// SuccessCount ...
 	SuccessCount int32
 	// MessageCount indicates the amount of OutputMessages present.
 	MessageCount int32
-	// CommandName ...
 	CommandName string
 	// OutputMessages is a list of messages joint with ;.
 	OutputMessages string
 }
 
-// Marshal ...
 func (s *SlashCommandExecutedEvent) Marshal(r IO) {
 	r.Varint32(&s.SuccessCount)
 	r.Varint32(&s.MessageCount)
@@ -439,20 +398,15 @@ func (s *SlashCommandExecutedEvent) Marshal(r IO) {
 // FishBucketedEvent is the event data sent when a fish is bucketed.
 type FishBucketedEvent struct{}
 
-// Marshal ...
 func (f *FishBucketedEvent) Marshal(r IO) {}
 
 // MobBornEvent is the event data sent when a mob is born.
 type MobBornEvent struct {
-	// EntityType ...
 	EntityType int32
-	// Variant ...
 	Variant int32
-	// Colour ...
 	Colour uint8
 }
 
-// Marshal ...
 func (m *MobBornEvent) Marshal(r IO) {
 	r.Varint32(&m.EntityType)
 	r.Varint32(&m.Variant)
@@ -462,18 +416,14 @@ func (m *MobBornEvent) Marshal(r IO) {
 // PetDiedEvent is the event data sent when a pet dies.
 type PetDiedEvent struct{}
 
-// Marshal ...
 func (p *PetDiedEvent) Marshal(r IO) {}
 
 // CauldronInteractEvent is the event data sent when a cauldron is interacted with.
 type CauldronInteractEvent struct {
-	// BlockInteractionType ...
 	BlockInteractionType uint8
-	// ItemID ...
 	ItemID int16
 }
 
-// Marshal ...
 func (c *CauldronInteractEvent) Marshal(r IO) {
 	r.Uint8(&c.BlockInteractionType)
 	r.Int16(&c.ItemID)
@@ -481,13 +431,10 @@ func (c *CauldronInteractEvent) Marshal(r IO) {
 
 // ComposterInteractEvent is the event data sent when a composter is interacted with.
 type ComposterInteractEvent struct {
-	// BlockInteractionType ...
 	BlockInteractionType uint8
-	// ItemID ...
 	ItemID int16
 }
 
-// Marshal ...
 func (c *ComposterInteractEvent) Marshal(r IO) {
 	r.Uint8(&c.BlockInteractionType)
 	r.Int16(&c.ItemID)
@@ -495,37 +442,29 @@ func (c *ComposterInteractEvent) Marshal(r IO) {
 
 // BellUsedEvent is the event data sent when a bell is used.
 type BellUsedEvent struct {
-	// ItemID ...
 	ItemID int16
 }
 
-// Marshal ...
 func (b *BellUsedEvent) Marshal(r IO) {
 	r.Int16(&b.ItemID)
 }
 
 // EntityDefinitionTriggerEvent is an event used for an unknown purpose.
 type EntityDefinitionTriggerEvent struct {
-	// EventName ...
 	EventName string
 }
 
-// Marshal ...
 func (e *EntityDefinitionTriggerEvent) Marshal(r IO) {
 	r.String(&e.EventName)
 }
 
 // RaidUpdateEvent is an event used to update a raids progress client side.
 type RaidUpdateEvent struct {
-	// CurrentRaidWave ...
 	CurrentRaidWave int32
-	// TotalRaidWaves ...
 	TotalRaidWaves int32
-	// WonRaid ...
 	WonRaid bool
 }
 
-// Marshal ...
 func (ra *RaidUpdateEvent) Marshal(r IO) {
 	r.Varint32(&ra.CurrentRaidWave)
 	r.Varint32(&ra.TotalRaidWaves)
@@ -535,41 +474,33 @@ func (ra *RaidUpdateEvent) Marshal(r IO) {
 // MovementAnomalyEvent is an event used to detect movement anomalies.
 type MovementAnomalyEvent struct{}
 
-// Marshal ...
 func (m *MovementAnomalyEvent) Marshal(r IO) {}
 
 // MovementCorrectedEvent is an event used to correct movement anomalies.
 type MovementCorrectedEvent struct{}
 
-// Marshal ...
 func (m *MovementCorrectedEvent) Marshal(r IO) {}
 
 // ExtractHoneyEvent is an event used to extract honey from a hive.
 type ExtractHoneyEvent struct{}
 
-// Marshal ...
 func (e *ExtractHoneyEvent) Marshal(r IO) {}
 
 // TargetBlockHitEvent is an event used when a target block is hit by a arrow.
 type TargetBlockHitEvent struct {
-	// RedstoneLevel ...
 	RedstoneLevel int32
 }
 
-// Marshal ...
 func (t *TargetBlockHitEvent) Marshal(r IO) {
 	r.Varint32(&t.RedstoneLevel)
 }
 
 // PiglinBarterEvent is called when a player drops gold ingots to a piglin to initiate a trade for an item.
 type PiglinBarterEvent struct {
-	// ItemID ...
 	ItemID int32
-	// WasTargetingBarteringPlayer ...
 	WasTargetingBarteringPlayer bool
 }
 
-// Marshal ...
 func (p *PiglinBarterEvent) Marshal(r IO) {
 	r.Varint32(&p.ItemID)
 	r.Bool(&p.WasTargetingBarteringPlayer)
@@ -591,31 +522,25 @@ type WaxedOrUnwaxedCopperEvent struct {
 	CopperBlockID int32
 }
 
-// Marshal ...
 func (w *WaxedOrUnwaxedCopperEvent) Marshal(r IO) {
 	r.Varint32(&w.CopperBlockID)
 }
 
 // CodeBuilderRuntimeActionEvent is an event sent by the server when a code builder runtime action is performed.
 type CodeBuilderRuntimeActionEvent struct {
-	// Action ...
 	Action string
 }
 
-// Marshal ...
 func (c *CodeBuilderRuntimeActionEvent) Marshal(r IO) {
 	r.String(&c.Action)
 }
 
 // CodeBuilderScoreboardEvent is an event sent by the server when a code builder scoreboard is updated.
 type CodeBuilderScoreboardEvent struct {
-	// ObjectiveName ...
 	ObjectiveName string
-	// Score ...
 	Score int32
 }
 
-// Marshal ...
 func (c *CodeBuilderScoreboardEvent) Marshal(r IO) {
 	r.String(&c.ObjectiveName)
 	r.Varint32(&c.Score)
@@ -624,19 +549,16 @@ func (c *CodeBuilderScoreboardEvent) Marshal(r IO) {
 // StriderRiddenInLavaInOverworldEvent is an event sent by the server when a strider is ridden in lava in the overworld.
 type StriderRiddenInLavaInOverworldEvent struct{}
 
-// Marshal ...
 func (s *StriderRiddenInLavaInOverworldEvent) Marshal(r IO) {}
 
 // SneakCloseToSculkSensorEvent is an event sent by the server when a player sneaks close to a sculk sensor.
 type SneakCloseToSculkSensorEvent struct{}
 
-// Marshal ...
 func (s *SneakCloseToSculkSensorEvent) Marshal(r IO) {}
 
 // CarefulRestorationEvent is an event sent by the server when a player performs a careful restoration.
 type CarefulRestorationEvent struct{}
 
-// Marshal ...
 func (c *CarefulRestorationEvent) Marshal(r IO) {}
 
 // ItemUsedEvent is when a player right clicks a item.
@@ -647,7 +569,6 @@ type ItemUsedEvent struct {
 	UseCount  int32
 }
 
-// Marshal ...
 func (i *ItemUsedEvent) Marshal(r IO) {
 	r.Int16(&i.ItemID)
 	r.Int32(&i.ItemAux)

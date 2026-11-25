@@ -23,7 +23,6 @@ type SetScoreboardIdentity struct {
 	Entries []protocol.ScoreboardIdentityEntry
 }
 
-// ID ...
 func (*SetScoreboardIdentity) ID() uint32 {
 	return IDSetScoreboardIdentity
 }

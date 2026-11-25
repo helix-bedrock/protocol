@@ -148,7 +148,6 @@ func PlayerMoveSettings(r IO, x *PlayerMovementSettings) {
 	r.Bool(&x.ServerAuthoritativeBlockBreaking)
 }
 
-// PlayerBlockAction ...
 type PlayerBlockAction struct {
 	// Action is the action to be performed, and is one of the constants listed above.
 	Action int32

@@ -16,7 +16,6 @@ type SubClientLogin struct {
 	ConnectionRequest []byte
 }
 
-// ID ...
 func (*SubClientLogin) ID() uint32 {
 	return IDSubClientLogin
 }

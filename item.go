@@ -23,7 +23,6 @@ type ItemInstance struct {
 // define its type.
 type ItemStack struct {
 	ItemType
-	// BlockRuntimeID ...
 	BlockRuntimeID int32
 	// Count is the count of items that the item stack holds.
 	Count uint16

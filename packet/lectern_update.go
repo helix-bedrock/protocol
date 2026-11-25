@@ -16,7 +16,6 @@ type LecternUpdate struct {
 	Position protocol.BlockPos
 }
 
-// ID ...
 func (*LecternUpdate) ID() uint32 {
 	return IDLecternUpdate
 }

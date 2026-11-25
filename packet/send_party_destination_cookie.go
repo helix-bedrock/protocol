@@ -18,7 +18,6 @@ type SendPartyDestinationCookie struct {
 	DestinationName string
 }
 
-// ID ...
 func (*SendPartyDestinationCookie) ID() uint32 {
 	return IDSendPartyDestinationCookie
 }

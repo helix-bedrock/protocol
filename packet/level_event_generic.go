@@ -83,7 +83,6 @@ type LevelEventGeneric struct {
 	SerialisedEventData []byte
 }
 
-// ID ...
 func (pk *LevelEventGeneric) ID() uint32 {
 	return IDLevelEventGeneric
 }

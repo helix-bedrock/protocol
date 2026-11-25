@@ -8,7 +8,6 @@ import (
 // loading resource packs and is ready for validation.
 type ResourcePacksReadyForValidation struct{}
 
-// ID ...
 func (*ResourcePacksReadyForValidation) ID() uint32 {
 	return IDResourcePacksReadyForValidation
 }

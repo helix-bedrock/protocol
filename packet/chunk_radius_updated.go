@@ -13,7 +13,6 @@ type ChunkRadiusUpdated struct {
 	ChunkRadius int32
 }
 
-// ID ...
 func (*ChunkRadiusUpdated) ID() uint32 {
 	return IDChunkRadiusUpdated
 }

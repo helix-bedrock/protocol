@@ -12,7 +12,6 @@ type CurrentStructureFeature struct {
 	CurrentFeature string
 }
 
-// ID ...
 func (*CurrentStructureFeature) ID() uint32 {
 	return IDCurrentStructureFeature
 }

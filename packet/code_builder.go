@@ -15,7 +15,6 @@ type CodeBuilder struct {
 	ShouldOpenCodeBuilder bool
 }
 
-// ID ...
 func (*CodeBuilder) ID() uint32 {
 	return IDCodeBuilder
 }

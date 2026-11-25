@@ -15,7 +15,6 @@ type OpenSign struct {
 	FrontSide bool
 }
 
-// ID ...
 func (*OpenSign) ID() uint32 {
 	return IDOpenSign
 }

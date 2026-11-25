@@ -35,7 +35,6 @@ type DebugMarkerData struct {
 	Duration uint64
 }
 
-// Marshal ...
 func (x *DebugMarkerData) Marshal(io protocol.IO) {
 	io.String(&x.Text)
 	io.Vec3(&x.Position)
@@ -43,7 +42,6 @@ func (x *DebugMarkerData) Marshal(io protocol.IO) {
 	io.Uint64(&x.Duration)
 }
 
-// ID ...
 func (*ClientBoundDebugRenderer) ID() uint32 {
 	return IDClientBoundDebugRenderer
 }

@@ -35,7 +35,6 @@ type UpdateBlockSynced struct {
 	TransitionType uint64
 }
 
-// ID ...
 func (*UpdateBlockSynced) ID() uint32 {
 	return IDUpdateBlockSynced
 }

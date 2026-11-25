@@ -15,7 +15,6 @@ type TakeItemActor struct {
 	TakerEntityRuntimeID uint64
 }
 
-// ID ...
 func (*TakeItemActor) ID() uint32 {
 	return IDTakeItemActor
 }

@@ -10,7 +10,6 @@ type CameraSpline struct {
 	Splines []protocol.CameraSplineDefinition
 }
 
-// ID ...
 func (*CameraSpline) ID() uint32 {
 	return IDCameraSpline
 }

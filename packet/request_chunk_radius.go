@@ -16,7 +16,6 @@ type RequestChunkRadius struct {
 	MaxChunkRadius uint8
 }
 
-// ID ...
 func (*RequestChunkRadius) ID() uint32 {
 	return IDRequestChunkRadius
 }

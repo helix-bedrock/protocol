@@ -25,7 +25,6 @@ type MovementEffect struct {
 	Tick uint64
 }
 
-// ID ...
 func (*MovementEffect) ID() uint32 {
 	return IDMovementEffect
 }

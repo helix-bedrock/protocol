@@ -18,7 +18,6 @@ type SetActorMotion struct {
 	Tick uint64
 }
 
-// ID ...
 func (*SetActorMotion) ID() uint32 {
 	return IDSetActorMotion
 }

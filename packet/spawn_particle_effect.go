@@ -28,7 +28,6 @@ type SpawnParticleEffect struct {
 	MoLangVariables protocol.Optional[[]byte]
 }
 
-// ID ...
 func (*SpawnParticleEffect) ID() uint32 {
 	return IDSpawnParticleEffect
 }

@@ -13,7 +13,6 @@ type SetTime struct {
 	Time int32
 }
 
-// ID ...
 func (*SetTime) ID() uint32 {
 	return IDSetTime
 }

@@ -43,7 +43,6 @@ type ResourcePackDataInfo struct {
 	PackType byte
 }
 
-// ID ...
 func (*ResourcePackDataInfo) ID() uint32 {
 	return IDResourcePackDataInfo
 }

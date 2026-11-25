@@ -24,7 +24,6 @@ type PlayerLocation struct {
 	Position mgl32.Vec3
 }
 
-// ID ...
 func (*PlayerLocation) ID() uint32 {
 	return IDPlayerLocation
 }

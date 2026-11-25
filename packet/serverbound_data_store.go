@@ -10,7 +10,6 @@ type ServerBoundDataStore struct {
 	Update protocol.DataStoreUpdate
 }
 
-// ID ...
 func (*ServerBoundDataStore) ID() uint32 {
 	return IDServerBoundDataStore
 }

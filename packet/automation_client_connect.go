@@ -13,7 +13,6 @@ type AutomationClientConnect struct {
 	ServerURI string
 }
 
-// ID ...
 func (*AutomationClientConnect) ID() uint32 {
 	return IDAutomationClientConnect
 }

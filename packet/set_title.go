@@ -44,7 +44,6 @@ type SetTitle struct {
 	FilteredMessage string
 }
 
-// ID ...
 func (*SetTitle) ID() uint32 {
 	return IDSetTitle
 }

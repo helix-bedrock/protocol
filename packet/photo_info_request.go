@@ -12,7 +12,6 @@ type PhotoInfoRequest struct {
 	PhotoID int64
 }
 
-// ID ...
 func (*PhotoInfoRequest) ID() uint32 {
 	return IDPhotoInfoRequest
 }

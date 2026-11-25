@@ -11,7 +11,6 @@ type AwardAchievement struct {
 	AchievementID int32
 }
 
-// ID ...
 func (*AwardAchievement) ID() uint32 {
 	return IDAwardAchievement
 }

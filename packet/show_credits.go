@@ -20,7 +20,6 @@ type ShowCredits struct {
 	StatusType int32
 }
 
-// ID ...
 func (*ShowCredits) ID() uint32 {
 	return IDShowCredits
 }

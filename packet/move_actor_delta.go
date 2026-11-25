@@ -34,7 +34,6 @@ type MoveActorDelta struct {
 	Ticks uint64
 }
 
-// ID ...
 func (*MoveActorDelta) ID() uint32 {
 	return IDMoveActorDelta
 }

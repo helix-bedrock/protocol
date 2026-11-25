@@ -11,7 +11,6 @@ type SetDifficulty struct {
 	Difficulty uint32
 }
 
-// ID ...
 func (*SetDifficulty) ID() uint32 {
 	return IDSetDifficulty
 }

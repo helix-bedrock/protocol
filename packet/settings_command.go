@@ -16,7 +16,6 @@ type SettingsCommand struct {
 	SuppressOutput bool
 }
 
-// ID ...
 func (*SettingsCommand) ID() uint32 {
 	return IDSettingsCommand
 }

@@ -10,7 +10,6 @@ type ServerPresenceInfo struct {
 	PresenceInfo protocol.Optional[protocol.PresenceInfo]
 }
 
-// ID ...
 func (*ServerPresenceInfo) ID() uint32 {
 	return IDServerPresenceInfo
 }

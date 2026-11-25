@@ -15,7 +15,6 @@ type MapInfoRequest struct {
 	ClientPixels []protocol.PixelRequest
 }
 
-// ID ...
 func (*MapInfoRequest) ID() uint32 {
 	return IDMapInfoRequest
 }

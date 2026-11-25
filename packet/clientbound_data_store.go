@@ -10,7 +10,6 @@ type ClientBoundDataStore struct {
 	Updates []protocol.DataStoreChangeEntry
 }
 
-// ID ...
 func (*ClientBoundDataStore) ID() uint32 {
 	return IDClientBoundDataStore
 }

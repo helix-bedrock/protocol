@@ -18,7 +18,6 @@ type HurtArmour struct {
 	ArmourSlots uint64
 }
 
-// ID ...
 func (*HurtArmour) ID() uint32 {
 	return IDHurtArmour
 }

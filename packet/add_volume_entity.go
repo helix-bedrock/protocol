@@ -27,7 +27,6 @@ type AddVolumeEntity struct {
 	EngineVersion string
 }
 
-// ID ...
 func (*AddVolumeEntity) ID() uint32 {
 	return IDAddVolumeEntity
 }

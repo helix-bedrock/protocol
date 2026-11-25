@@ -22,7 +22,6 @@ type InventoryContent struct {
 	StorageItem protocol.ItemInstance
 }
 
-// ID ...
 func (*InventoryContent) ID() uint32 {
 	return IDInventoryContent
 }

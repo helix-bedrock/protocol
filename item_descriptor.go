@@ -27,7 +27,6 @@ const (
 // slots or ingredients.
 type InvalidItemDescriptor struct{}
 
-// Marshal ...
 func (*InvalidItemDescriptor) Marshal(IO) {}
 
 // DefaultItemDescriptor represents an item descriptor for regular items. This is used for the significant majority of
@@ -40,7 +39,6 @@ type DefaultItemDescriptor struct {
 	MetadataValue int32
 }
 
-// Marshal ...
 func (x *DefaultItemDescriptor) Marshal(r IO) {
 	r.String(&x.Name)
 	r.Varint32(&x.MetadataValue)
@@ -54,7 +52,6 @@ type MoLangItemDescriptor struct {
 	Version int16
 }
 
-// Marshal ...
 func (x *MoLangItemDescriptor) Marshal(r IO) {
 	r.String(&x.Expression)
 	r.Int16(&x.Version)
@@ -129,7 +126,6 @@ type ItemTagItemDescriptor struct {
 	Tag string
 }
 
-// Marshal ...
 func (x *ItemTagItemDescriptor) Marshal(r IO) {
 	r.String(&x.Tag)
 }

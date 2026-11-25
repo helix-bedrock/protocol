@@ -57,7 +57,6 @@ type StructureBlockUpdate struct {
 	Waterlogged bool
 }
 
-// ID ...
 func (*StructureBlockUpdate) ID() uint32 {
 	return IDStructureBlockUpdate
 }

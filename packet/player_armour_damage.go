@@ -19,7 +19,6 @@ type PlayerArmourDamage struct {
 	List []protocol.PlayerArmourDamageEntry
 }
 
-// ID ...
 func (pk *PlayerArmourDamage) ID() uint32 {
 	return IDPlayerArmourDamage
 }

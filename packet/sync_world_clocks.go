@@ -22,7 +22,6 @@ type SyncWorldClocks struct {
 	RemoveTimeMarkerIDs []uint64
 }
 
-// ID ...
 func (*SyncWorldClocks) ID() uint32 {
 	return IDSyncWorldClocks
 }

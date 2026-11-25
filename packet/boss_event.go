@@ -68,7 +68,6 @@ type BossEvent struct {
 	Overlay uint8
 }
 
-// ID ...
 func (*BossEvent) ID() uint32 {
 	return IDBossEvent
 }

@@ -10,7 +10,6 @@ type ServerSettingsRequest struct {
 	// ServerSettingsRequest has no fields.
 }
 
-// ID ...
 func (*ServerSettingsRequest) ID() uint32 {
 	return IDServerSettingsRequest
 }

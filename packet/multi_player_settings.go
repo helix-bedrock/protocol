@@ -20,7 +20,6 @@ type MultiPlayerSettings struct {
 	ActionType int32
 }
 
-// ID ...
 func (*MultiPlayerSettings) ID() uint32 {
 	return IDMultiPlayerSettings
 }

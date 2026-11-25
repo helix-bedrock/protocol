@@ -37,7 +37,6 @@ type CommandOutput struct {
 	DataSet protocol.Optional[string]
 }
 
-// ID ...
 func (*CommandOutput) ID() uint32 {
 	return IDCommandOutput
 }

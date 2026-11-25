@@ -15,7 +15,6 @@ type Camera struct {
 	TargetPlayerUniqueID int64
 }
 
-// ID ...
 func (*Camera) ID() uint32 {
 	return IDCamera
 }

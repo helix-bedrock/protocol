@@ -164,7 +164,6 @@ type PlayerAuthInput struct {
 	RawMoveVector mgl32.Vec2
 }
 
-// ID ...
 // Reset clears pk for reading into again (conn.Config.ReusePackets), keeping the storage
 // of its input flags and block actions, the fields every input fills.
 func (pk *PlayerAuthInput) Reset() {

@@ -24,7 +24,6 @@ type NPCDialogue struct {
 	ActionJSON string
 }
 
-// ID ...
 func (*NPCDialogue) ID() uint32 {
 	return IDNPCDialogue
 }

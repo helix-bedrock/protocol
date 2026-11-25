@@ -29,7 +29,6 @@ type PacketViolationWarning struct { //nolint:revive // vanilla packet name
 	ViolationContext string
 }
 
-// ID ...
 func (*PacketViolationWarning) ID() uint32 {
 	return IDPacketViolationWarning
 }

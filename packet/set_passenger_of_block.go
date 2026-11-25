@@ -11,7 +11,6 @@ type SetPassengerOfBlock struct {
 	PassengerOfBlock protocol.Optional[protocol.PassengerOfBlockData]
 }
 
-// ID ...
 func (*SetPassengerOfBlock) ID() uint32 {
 	return IDSetPassengerOfBlock
 }

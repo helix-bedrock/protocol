@@ -66,7 +66,6 @@ type AddPlayer struct {
 	BuildPlatform int32
 }
 
-// ID ...
 func (*AddPlayer) ID() uint32 {
 	return IDAddPlayer
 }

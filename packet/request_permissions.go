@@ -17,7 +17,6 @@ type RequestPermissions struct {
 	RequestedPermissions uint16
 }
 
-// ID ...
 func (*RequestPermissions) ID() uint32 {
 	return IDRequestPermissions
 }

@@ -34,7 +34,6 @@ type ResourcePacksInfo struct {
 	TexturePacks []protocol.TexturePackInfo
 }
 
-// ID ...
 func (*ResourcePacksInfo) ID() uint32 {
 	return IDResourcePacksInfo
 }

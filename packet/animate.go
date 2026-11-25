@@ -34,7 +34,6 @@ type Animate struct {
 	// ID is unique for each world session, and entities are generally identified in packets using this
 	// runtime ID.
 	EntityRuntimeID uint64
-	// Data ...
 	Data float32
 	// SwingSource is the source for swing actions. It is one of the action type constants that
 	// may be found above.
@@ -43,7 +42,6 @@ type Animate struct {
 	Hand byte
 }
 
-// ID ...
 func (*Animate) ID() uint32 {
 	return IDAnimate
 }

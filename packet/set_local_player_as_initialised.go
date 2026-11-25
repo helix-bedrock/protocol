@@ -13,7 +13,6 @@ type SetLocalPlayerAsInitialised struct {
 	EntityRuntimeID uint64
 }
 
-// ID ...
 func (*SetLocalPlayerAsInitialised) ID() uint32 {
 	return IDSetLocalPlayerAsInitialised
 }

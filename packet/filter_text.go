@@ -16,7 +16,6 @@ type FilterText struct {
 	FromServer bool
 }
 
-// ID ...
 func (*FilterText) ID() uint32 {
 	return IDFilterText
 }

@@ -35,7 +35,6 @@ type PhotoTransfer struct {
 	NewPhotoName string
 }
 
-// ID ...
 func (*PhotoTransfer) ID() uint32 {
 	return IDPhotoTransfer
 }

@@ -25,7 +25,6 @@ type AddPainting struct {
 	Title string
 }
 
-// ID ...
 func (*AddPainting) ID() uint32 {
 	return IDAddPainting
 }

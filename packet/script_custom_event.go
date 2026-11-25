@@ -16,7 +16,6 @@ type ScriptCustomEvent struct {
 	EventData []byte
 }
 
-// ID ...
 func (*ScriptCustomEvent) ID() uint32 {
 	return IDScriptCustomEvent
 }

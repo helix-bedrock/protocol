@@ -25,7 +25,6 @@ type MobEquipment struct {
 	WindowID byte
 }
 
-// ID ...
 func (*MobEquipment) ID() uint32 {
 	return IDMobEquipment
 }

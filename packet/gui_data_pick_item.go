@@ -17,7 +17,6 @@ type GUIDataPickItem struct {
 	HotBarSlot int32
 }
 
-// ID ...
 func (*GUIDataPickItem) ID() uint32 {
 	return IDGUIDataPickItem
 }

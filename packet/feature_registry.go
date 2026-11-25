@@ -12,7 +12,6 @@ type FeatureRegistry struct {
 	Features []protocol.GenerationFeature
 }
 
-// ID ...
 func (pk *FeatureRegistry) ID() uint32 {
 	return IDFeatureRegistry
 }

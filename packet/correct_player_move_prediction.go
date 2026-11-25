@@ -32,7 +32,6 @@ type CorrectPlayerMovePrediction struct {
 	Tick uint64
 }
 
-// ID ...
 func (*CorrectPlayerMovePrediction) ID() uint32 {
 	return IDCorrectPlayerMovePrediction
 }

@@ -55,7 +55,6 @@ const maxStringSize = math.MaxInt16
 
 type networkLittleEndian struct{ littleEndian }
 
-// WriteInt32 ...
 func (networkLittleEndian) WriteInt32(w *offsetWriter, x int32) error {
 	ux := uint32(x) << 1
 	if x < 0 {
@@ -73,7 +72,6 @@ func (networkLittleEndian) WriteInt32(w *offsetWriter, x int32) error {
 	return nil
 }
 
-// WriteInt64 ...
 func (networkLittleEndian) WriteInt64(w *offsetWriter, x int64) error {
 	ux := uint64(x) << 1
 	if x < 0 {
@@ -91,7 +89,6 @@ func (networkLittleEndian) WriteInt64(w *offsetWriter, x int64) error {
 	return nil
 }
 
-// WriteString ...
 func (networkLittleEndian) WriteString(w *offsetWriter, x string) error {
 	if len(x) > maxStringSize {
 		return InvalidStringError{Off: w.off, N: uint(len(x)), Err: errStringTooLong}
@@ -113,7 +110,6 @@ func (networkLittleEndian) WriteString(w *offsetWriter, x string) error {
 	return nil
 }
 
-// Int32 ...
 func (networkLittleEndian) Int32(r *offsetReader) (int32, error) {
 	var ux uint32
 	for i := uint(0); i < 35; i += 7 {
@@ -133,7 +129,6 @@ func (networkLittleEndian) Int32(r *offsetReader) (int32, error) {
 	return 0, InvalidVarintError{N: 5, Off: r.off}
 }
 
-// Int64 ...
 func (networkLittleEndian) Int64(r *offsetReader) (int64, error) {
 	var ux uint64
 	for i := uint(0); i < 70; i += 7 {
@@ -153,7 +148,6 @@ func (networkLittleEndian) Int64(r *offsetReader) (int64, error) {
 	return 0, InvalidVarintError{N: 10, Off: r.off}
 }
 
-// String ...
 func (e networkLittleEndian) String(r *offsetReader) (string, error) {
 	length, err := e.stringLength(r)
 	if err != nil {
@@ -185,7 +179,6 @@ func (networkLittleEndian) stringLength(r *offsetReader) (uint32, error) {
 	return 0, InvalidVarintError{N: 5, Off: r.off}
 }
 
-// Int32Slice ...
 func (e networkLittleEndian) Int32Slice(r *offsetReader) ([]int32, error) {
 	n, err := e.Int32(r)
 	if err != nil {
@@ -208,7 +201,6 @@ func (e networkLittleEndian) Int32Slice(r *offsetReader) ([]int32, error) {
 	return m, nil
 }
 
-// Int64Slice ...
 func (e networkLittleEndian) Int64Slice(r *offsetReader) ([]int64, error) {
 	n, err := e.Int32(r)
 	if err != nil {

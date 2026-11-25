@@ -14,7 +14,6 @@ type ServerBoundPackSettingChange struct {
 	PackSetting protocol.PackSetting
 }
 
-// ID ...
 func (*ServerBoundPackSettingChange) ID() uint32 {
 	return IDServerBoundPackSettingChange
 }

@@ -25,7 +25,6 @@ type TexturePackInfo struct {
 	// ContentKey is the key used to decrypt the behaviour pack if it is encrypted. This is generally the case
 	// for marketplace texture packs.
 	ContentKey string
-	// SubPackName ...
 	SubPackName string
 	// ContentIdentity is another UUID for the resource pack, and is generally set for marketplace texture
 	// packs. It is also required for client-side validations when the resource pack is encrypted.
@@ -66,7 +65,6 @@ type StackResourcePack struct {
 	// long as they carry the same version. Sending a resource pack with a different version than previously
 	// will force the client to re-download it.
 	Version string
-	// SubPackName ...
 	SubPackName string
 }
 

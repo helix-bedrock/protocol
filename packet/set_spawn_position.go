@@ -28,7 +28,6 @@ type SetSpawnPosition struct {
 	SpawnPosition protocol.BlockPos
 }
 
-// ID ...
 func (*SetSpawnPosition) ID() uint32 {
 	return IDSetSpawnPosition
 }

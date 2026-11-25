@@ -13,7 +13,6 @@ type SetActorLink struct {
 	EntityLink protocol.EntityLink
 }
 
-// ID ...
 func (*SetActorLink) ID() uint32 {
 	return IDSetActorLink
 }

@@ -40,7 +40,6 @@ type InventoryTransaction struct {
 	TransactionData protocol.InventoryTransactionData
 }
 
-// ID ...
 func (*InventoryTransaction) ID() uint32 {
 	return IDInventoryTransaction
 }

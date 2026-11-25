@@ -15,7 +15,6 @@ type ClientCacheBlobStatus struct {
 	HitHashes []uint64
 }
 
-// ID ...
 func (pk *ClientCacheBlobStatus) ID() uint32 {
 	return IDClientCacheBlobStatus
 }

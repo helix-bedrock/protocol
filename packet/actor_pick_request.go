@@ -17,7 +17,6 @@ type ActorPickRequest struct {
 	WithData bool
 }
 
-// ID ...
 func (*ActorPickRequest) ID() uint32 {
 	return IDActorPickRequest
 }

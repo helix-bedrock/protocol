@@ -17,7 +17,6 @@ type Login struct {
 	ConnectionRequest []byte
 }
 
-// ID ...
 func (*Login) ID() uint32 {
 	return IDLogin
 }

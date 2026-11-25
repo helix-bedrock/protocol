@@ -18,7 +18,6 @@ type UpdateAttributes struct {
 	Tick uint64
 }
 
-// ID ...
 func (*UpdateAttributes) ID() uint32 {
 	return IDUpdateAttributes
 }

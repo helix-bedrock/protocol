@@ -20,7 +20,6 @@ type ClientboundPlayAudioContent struct {
 	Sound PlaySound
 }
 
-// ID ...
 func (*ClientboundPlayAudioContent) ID() uint32 {
 	return IDClientboundPlayAudioContent
 }

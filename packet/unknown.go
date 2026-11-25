@@ -16,7 +16,6 @@ type Unknown struct {
 	Payload []byte
 }
 
-// ID ...
 func (pk *Unknown) ID() uint32 {
 	return pk.PacketID
 }

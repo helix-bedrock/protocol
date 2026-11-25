@@ -20,7 +20,6 @@ type ServerBoundLoadingScreen struct {
 	LoadingScreenID protocol.Optional[uint32]
 }
 
-// ID ...
 func (*ServerBoundLoadingScreen) ID() uint32 {
 	return IDServerBoundLoadingScreen
 }

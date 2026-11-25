@@ -29,7 +29,6 @@ type MoveActorAbsolute struct {
 	Rotation mgl32.Vec3
 }
 
-// ID ...
 func (*MoveActorAbsolute) ID() uint32 {
 	return IDMoveActorAbsolute
 }

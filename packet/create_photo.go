@@ -13,7 +13,6 @@ type CreatePhoto struct {
 	ItemName string
 }
 
-// ID ...
 func (*CreatePhoto) ID() uint32 {
 	return IDCreatePhoto
 }

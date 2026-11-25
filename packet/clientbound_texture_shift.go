@@ -32,7 +32,6 @@ type ClientBoundTextureShift struct {
 	Enabled bool
 }
 
-// ID ...
 func (*ClientBoundTextureShift) ID() uint32 {
 	return IDClientBoundTextureShift
 }

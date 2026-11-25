@@ -21,7 +21,6 @@ type ClientCameraAimAssist struct {
 	AllowAimAssist bool
 }
 
-// ID ...
 func (*ClientCameraAimAssist) ID() uint32 {
 	return IDClientCameraAimAssist
 }

@@ -9,7 +9,6 @@ type PrimitiveShapes struct {
 	Shapes []protocol.PrimitiveShape
 }
 
-// ID ...
 func (pk *PrimitiveShapes) ID() uint32 {
 	return IDPrimitiveShapes
 }

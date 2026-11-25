@@ -253,7 +253,6 @@ type ReleaseItemTransactionData struct {
 	Hand byte
 }
 
-// Marshal ...
 func (data *UseItemTransactionData) Marshal(r IO) {
 	IntegerFunc(&data.ActionType, r.Varint32)
 	IntegerFunc(&data.TriggerType, r.Uint8)
@@ -269,7 +268,6 @@ func (data *UseItemTransactionData) Marshal(r IO) {
 	r.Uint8(&data.ClientCooldownState)
 }
 
-// Marshal ...
 func (data *UseItemOnEntityTransactionData) Marshal(r IO) {
 	r.ActorRuntimeID(&data.TargetEntityRuntimeID)
 	r.Varint32(&data.ActionType)
@@ -280,7 +278,6 @@ func (data *UseItemOnEntityTransactionData) Marshal(r IO) {
 	r.Vec3(&data.ClickedPosition)
 }
 
-// Marshal ...
 func (data *ReleaseItemTransactionData) Marshal(r IO) {
 	r.Varint32(&data.ActionType)
 	r.Varint32(&data.HotBarSlot)
@@ -289,10 +286,8 @@ func (data *ReleaseItemTransactionData) Marshal(r IO) {
 	r.Uint8(&data.Hand)
 }
 
-// Marshal ...
 func (*NormalTransactionData) Marshal(IO) {}
 
-// Marshal ...
 func (*MismatchTransactionData) Marshal(IO) {}
 
 // LegacySetItemSlot represents a slot that was changed during an InventoryTransaction. These slots have to

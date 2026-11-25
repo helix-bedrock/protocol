@@ -32,7 +32,6 @@ type ContainerSetData struct {
 	Value int32
 }
 
-// ID ...
 func (*ContainerSetData) ID() uint32 {
 	return IDContainerSetData
 }

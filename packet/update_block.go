@@ -27,7 +27,6 @@ type UpdateBlock struct {
 	Layer uint32
 }
 
-// ID ...
 func (*UpdateBlock) ID() uint32 {
 	return IDUpdateBlock
 }

@@ -35,7 +35,6 @@ type SetDisplayObjective struct {
 	SortOrder int32
 }
 
-// ID ...
 func (*SetDisplayObjective) ID() uint32 {
 	return IDSetDisplayObjective
 }

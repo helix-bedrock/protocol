@@ -15,7 +15,6 @@ type PlayerList struct {
 	Entries []protocol.PlayerListEntry
 }
 
-// ID ...
 func (*PlayerList) ID() uint32 {
 	return IDPlayerList
 }

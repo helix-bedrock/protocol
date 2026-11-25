@@ -30,7 +30,6 @@ type CraftingData struct {
 	ClearRecipes bool
 }
 
-// ID ...
 func (*CraftingData) ID() uint32 {
 	return IDCraftingData
 }

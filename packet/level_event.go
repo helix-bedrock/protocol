@@ -259,7 +259,6 @@ type LevelEvent struct {
 	EventData int32
 }
 
-// ID ...
 func (*LevelEvent) ID() uint32 {
 	return IDLevelEvent
 }

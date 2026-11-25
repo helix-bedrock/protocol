@@ -38,7 +38,6 @@ type CreativeContent struct {
 	Items []protocol.CreativeItem
 }
 
-// ID ...
 func (*CreativeContent) ID() uint32 {
 	return IDCreativeContent
 }

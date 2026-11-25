@@ -13,7 +13,6 @@ type ServerToClientHandshake struct {
 	JWT []byte
 }
 
-// ID ...
 func (*ServerToClientHandshake) ID() uint32 {
 	return IDServerToClientHandshake
 }

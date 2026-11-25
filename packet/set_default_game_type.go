@@ -13,7 +13,6 @@ type SetDefaultGameType struct {
 	GameType int32
 }
 
-// ID ...
 func (*SetDefaultGameType) ID() uint32 {
 	return IDSetDefaultGameType
 }

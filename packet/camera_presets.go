@@ -11,7 +11,6 @@ type CameraPresets struct {
 	Presets []protocol.CameraPreset
 }
 
-// ID ...
 func (*CameraPresets) ID() uint32 {
 	return IDCameraPresets
 }

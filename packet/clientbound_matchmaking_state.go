@@ -25,7 +25,6 @@ type ClientboundMatchmakingState struct {
 	Options protocol.Optional[protocol.MatchmakingStateOptions]
 }
 
-// ID ...
 func (*ClientboundMatchmakingState) ID() uint32 {
 	return IDClientboundMatchmakingState
 }

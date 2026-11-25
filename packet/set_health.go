@@ -12,7 +12,6 @@ type SetHealth struct {
 	Health int32
 }
 
-// ID ...
 func (*SetHealth) ID() uint32 {
 	return IDSetHealth
 }

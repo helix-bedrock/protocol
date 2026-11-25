@@ -23,7 +23,6 @@ type SetPlayerGameType struct {
 	GameType int32
 }
 
-// ID ...
 func (*SetPlayerGameType) ID() uint32 {
 	return IDSetPlayerGameType
 }

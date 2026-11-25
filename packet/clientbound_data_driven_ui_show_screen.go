@@ -14,7 +14,6 @@ type ClientBoundDataDrivenUIShowScreen struct {
 	DataInstanceID protocol.Optional[uint32]
 }
 
-// ID ...
 func (*ClientBoundDataDrivenUIShowScreen) ID() uint32 {
 	return IDClientBoundDataDrivenUIShowScreen
 }

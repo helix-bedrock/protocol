@@ -11,7 +11,6 @@ type SetCommandsEnabled struct {
 	Enabled bool
 }
 
-// ID ...
 func (*SetCommandsEnabled) ID() uint32 {
 	return IDSetCommandsEnabled
 }

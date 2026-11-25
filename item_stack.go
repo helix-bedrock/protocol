@@ -345,7 +345,6 @@ type transferStackRequestAction struct {
 	Source, Destination StackRequestSlotInfo
 }
 
-// Marshal ...
 func (a *transferStackRequestAction) Marshal(r IO) {
 	r.Uint8(&a.Count)
 	StackReqSlotInfo(r, &a.Source)
@@ -373,7 +372,6 @@ type SwapStackRequestAction struct {
 	Source, Destination StackRequestSlotInfo
 }
 
-// Marshal ...
 func (a *SwapStackRequestAction) Marshal(r IO) {
 	StackReqSlotInfo(r, &a.Source)
 	StackReqSlotInfo(r, &a.Destination)
@@ -393,7 +391,6 @@ type DropStackRequestAction struct {
 	Randomly bool
 }
 
-// Marshal ...
 func (a *DropStackRequestAction) Marshal(r IO) {
 	r.Uint8(&a.Count)
 	StackReqSlotInfo(r, &a.Source)
@@ -410,7 +407,6 @@ type DestroyStackRequestAction struct {
 	Source StackRequestSlotInfo
 }
 
-// Marshal ...
 func (a *DestroyStackRequestAction) Marshal(r IO) {
 	r.Uint8(&a.Count)
 	StackReqSlotInfo(r, &a.Source)
@@ -434,7 +430,6 @@ type CreateStackRequestAction struct {
 	ResultsSlot byte
 }
 
-// Marshal ...
 func (a *CreateStackRequestAction) Marshal(r IO) {
 	r.Uint8(&a.ResultsSlot)
 }
@@ -442,7 +437,6 @@ func (a *CreateStackRequestAction) Marshal(r IO) {
 // LabTableCombineStackRequestAction is sent by the client when it uses a lab table to combine item stacks.
 type LabTableCombineStackRequestAction struct{}
 
-// Marshal ...
 func (a *LabTableCombineStackRequestAction) Marshal(IO) {}
 
 // BeaconPaymentStackRequestAction is sent by the client when it submits an item to enable effects from a
@@ -452,7 +446,6 @@ type BeaconPaymentStackRequestAction struct {
 	PrimaryEffect, SecondaryEffect int32
 }
 
-// Marshal ...
 func (a *BeaconPaymentStackRequestAction) Marshal(r IO) {
 	r.Varint32(&a.PrimaryEffect)
 	r.Varint32(&a.SecondaryEffect)
@@ -470,7 +463,6 @@ type MineBlockStackRequestAction struct {
 	StackNetworkID int32
 }
 
-// Marshal ...
 func (a *MineBlockStackRequestAction) Marshal(r IO) {
 	r.Varint32(&a.HotbarSlot)
 	r.Varint32(&a.PredictedDurability)
@@ -491,7 +483,6 @@ type CraftRecipeStackRequestAction struct {
 	NumberOfCrafts byte
 }
 
-// Marshal ...
 func (a *CraftRecipeStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&a.RecipeNetworkID)
 	r.Uint8(&a.NumberOfCrafts)
@@ -511,7 +502,6 @@ type AutoCraftRecipeStackRequestAction struct {
 	Ingredients []ItemDescriptorCount
 }
 
-// Marshal ...
 func (a *AutoCraftRecipeStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&a.RecipeNetworkID)
 	r.Uint8(&a.NumberOfCrafts)
@@ -529,7 +519,6 @@ type CraftCreativeStackRequestAction struct {
 	NumberOfCrafts byte
 }
 
-// Marshal ...
 func (a *CraftCreativeStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&a.CreativeItemNetworkID)
 	r.Uint8(&a.NumberOfCrafts)
@@ -547,7 +536,6 @@ type CraftRecipeOptionalStackRequestAction struct {
 	FilterStringIndex int32
 }
 
-// Marshal ...
 func (c *CraftRecipeOptionalStackRequestAction) Marshal(r IO) {
 	r.Varuint32(&c.RecipeNetworkID)
 	// Four fixed bytes, as in BDS's reflection data and its reader and writer. An older
@@ -569,7 +557,6 @@ type CraftGrindstoneRecipeStackRequestAction struct {
 	Cost int32
 }
 
-// Marshal ...
 func (c *CraftGrindstoneRecipeStackRequestAction) Marshal(r IO) {
 	IntegerFunc(&c.RecipeNetworkID, r.Int32)
 	r.Uint8(&c.NumberOfCrafts)
@@ -585,7 +572,6 @@ type CraftLoomRecipeStackRequestAction struct {
 	TimesCrafted byte
 }
 
-// Marshal ...
 func (c *CraftLoomRecipeStackRequestAction) Marshal(r IO) {
 	r.String(&c.Pattern)
 	r.Uint8(&c.TimesCrafted)
@@ -599,7 +585,6 @@ type CraftDiscPressRecipeStackRequestAction struct {
 	TimesCrafted byte
 }
 
-// Marshal ...
 func (c *CraftDiscPressRecipeStackRequestAction) Marshal(r IO) {
 	r.String(&c.ReservedID)
 	r.Uint8(&c.TimesCrafted)
@@ -609,7 +594,6 @@ func (c *CraftDiscPressRecipeStackRequestAction) Marshal(r IO) {
 // in the new system. These include, for example, anvils.
 type CraftNonImplementedStackRequestAction struct{}
 
-// Marshal ...
 func (*CraftNonImplementedStackRequestAction) Marshal(IO) {}
 
 // CraftResultsDeprecatedStackRequestAction is an additional, deprecated packet sent by the client after
@@ -621,7 +605,6 @@ type CraftResultsDeprecatedStackRequestAction struct {
 	TimesCrafted byte
 }
 
-// Marshal ...
 func (a *CraftResultsDeprecatedStackRequestAction) Marshal(r IO) {
 	FuncSlice(r, &a.ResultItems, r.StackRequestItem)
 	r.Uint8(&a.TimesCrafted)

@@ -18,7 +18,6 @@ type SimpleEvent struct {
 	EventType uint16
 }
 
-// ID ...
 func (*SimpleEvent) ID() uint32 {
 	return IDSimpleEvent
 }

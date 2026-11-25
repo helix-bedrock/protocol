@@ -26,7 +26,6 @@ type UpdateEquip struct {
 	SerialisedInventoryData []byte
 }
 
-// ID ...
 func (*UpdateEquip) ID() uint32 {
 	return IDUpdateEquip
 }

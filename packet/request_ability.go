@@ -37,7 +37,6 @@ type RequestAbility struct {
 	Value any
 }
 
-// ID ...
 func (*RequestAbility) ID() uint32 {
 	return IDRequestAbility
 }

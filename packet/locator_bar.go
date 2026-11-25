@@ -10,7 +10,6 @@ type LocatorBar struct {
 	Waypoints []protocol.LocatorBarWaypoint
 }
 
-// ID ...
 func (*LocatorBar) ID() uint32 {
 	return IDLocatorBar
 }

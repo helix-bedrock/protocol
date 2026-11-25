@@ -9,15 +9,11 @@ import (
 // floating part of the inventory.
 // Since 1.2, the packet has been re-purposed, but its new functionality is not clear.
 type PlayerHotBar struct {
-	// SelectedHotBarSlot ...
 	SelectedHotBarSlot uint32
-	// WindowID ...
 	WindowID byte
-	// SelectHotBarSlot ...
 	SelectHotBarSlot bool
 }
 
-// ID ...
 func (*PlayerHotBar) ID() uint32 {
 	return IDPlayerHotBar
 }

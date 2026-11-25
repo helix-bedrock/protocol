@@ -21,7 +21,6 @@ type ResourcePackChunkData struct {
 	Data []byte
 }
 
-// ID ...
 func (*ResourcePackChunkData) ID() uint32 {
 	return IDResourcePackChunkData
 }

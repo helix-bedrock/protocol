@@ -33,7 +33,6 @@ type PlaySound struct {
 	PlaybackPositionSeconds protocol.Optional[float32]
 }
 
-// ID ...
 func (*PlaySound) ID() uint32 {
 	return IDPlaySound
 }

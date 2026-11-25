@@ -15,7 +15,6 @@ type MapCreateLockedCopy struct {
 	NewMapID int64
 }
 
-// ID ...
 func (*MapCreateLockedCopy) ID() uint32 {
 	return IDMapCreateLockedCopy
 }

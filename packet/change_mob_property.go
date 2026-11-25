@@ -20,7 +20,6 @@ type ChangeMobProperty struct {
 	FloatValue float32
 }
 
-// ID ...
 func (*ChangeMobProperty) ID() uint32 {
 	return IDChangeMobProperty
 }

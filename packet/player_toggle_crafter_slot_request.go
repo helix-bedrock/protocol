@@ -18,7 +18,6 @@ type PlayerToggleCrafterSlotRequest struct {
 	Disabled bool
 }
 
-// ID ...
 func (*PlayerToggleCrafterSlotRequest) ID() uint32 {
 	return IDPlayerToggleCrafterSlotRequest
 }

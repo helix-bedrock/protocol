@@ -15,7 +15,6 @@ type ModalFormRequest struct {
 	FormData []byte
 }
 
-// ID ...
 func (*ModalFormRequest) ID() uint32 {
 	return IDModalFormRequest
 }

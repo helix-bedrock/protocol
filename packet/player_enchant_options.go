@@ -16,7 +16,6 @@ type PlayerEnchantOptions struct {
 	Options []protocol.EnchantmentOption
 }
 
-// ID ...
 func (*PlayerEnchantOptions) ID() uint32 {
 	return IDPlayerEnchantOptions
 }

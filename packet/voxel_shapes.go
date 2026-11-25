@@ -14,7 +14,6 @@ type VoxelShapes struct {
 	CustomShapeCount uint16
 }
 
-// ID ...
 func (*VoxelShapes) ID() uint32 {
 	return IDVoxelShapes
 }

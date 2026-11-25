@@ -12,7 +12,6 @@ type ContainerRegistryCleanup struct {
 	RemovedContainers []protocol.FullContainerName
 }
 
-// ID ...
 func (*ContainerRegistryCleanup) ID() uint32 {
 	return IDContainerRegistryCleanup
 }

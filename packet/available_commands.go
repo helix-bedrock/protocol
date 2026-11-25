@@ -40,7 +40,6 @@ type AvailableCommands struct {
 	Constraints []protocol.CommandEnumConstraint
 }
 
-// ID ...
 func (*AvailableCommands) ID() uint32 {
 	return IDAvailableCommands
 }

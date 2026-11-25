@@ -12,7 +12,6 @@ type JigsawStructureData struct {
 	StructureData map[string]any
 }
 
-// ID ...
 func (*JigsawStructureData) ID() uint32 {
 	return IDJigsawStructureData
 }

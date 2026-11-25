@@ -12,7 +12,6 @@ type PurchaseReceipt struct {
 	Receipts []string
 }
 
-// ID ...
 func (*PurchaseReceipt) ID() uint32 {
 	return IDPurchaseReceipt
 }

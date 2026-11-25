@@ -68,7 +68,6 @@ type MobEffect struct {
 	Ambient bool
 }
 
-// ID ...
 func (*MobEffect) ID() uint32 {
 	return IDMobEffect
 }

@@ -12,7 +12,6 @@ type ClientStartItemCooldown struct {
 	Duration int32
 }
 
-// ID ...
 func (*ClientStartItemCooldown) ID() uint32 {
 	return IDClientStartItemCooldown
 }

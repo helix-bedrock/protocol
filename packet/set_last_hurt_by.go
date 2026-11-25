@@ -12,7 +12,6 @@ type SetLastHurtBy struct {
 	EntityType int32
 }
 
-// ID ...
 func (*SetLastHurtBy) ID() uint32 {
 	return IDSetLastHurtBy
 }

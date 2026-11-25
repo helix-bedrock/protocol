@@ -30,7 +30,6 @@ type Emote struct {
 	Flags byte
 }
 
-// ID ...
 func (*Emote) ID() uint32 {
 	return IDEmote
 }

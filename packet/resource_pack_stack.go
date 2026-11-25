@@ -29,7 +29,6 @@ type ResourcePackStack struct {
 	IncludeEditorPacks bool
 }
 
-// ID ...
 func (*ResourcePackStack) ID() uint32 {
 	return IDResourcePackStack
 }

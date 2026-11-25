@@ -21,7 +21,6 @@ type LessonProgress struct {
 	Score int32
 }
 
-// ID ...
 func (*LessonProgress) ID() uint32 {
 	return IDLessonProgress
 }

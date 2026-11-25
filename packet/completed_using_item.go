@@ -35,7 +35,6 @@ type CompletedUsingItem struct {
 	UseMethod int32
 }
 
-// ID ...
 func (*CompletedUsingItem) ID() uint32 {
 	return IDCompletedUsingItem
 }

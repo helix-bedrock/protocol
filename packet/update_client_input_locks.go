@@ -28,7 +28,6 @@ type UpdateClientInputLocks struct {
 	Locks uint32
 }
 
-// ID ...
 func (pk *UpdateClientInputLocks) ID() uint32 {
 	return IDUpdateClientInputLocks
 }

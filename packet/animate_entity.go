@@ -29,7 +29,6 @@ type AnimateEntity struct {
 	EntityRuntimeIDs []uint64
 }
 
-// ID ...
 func (*AnimateEntity) ID() uint32 {
 	return IDAnimateEntity
 }

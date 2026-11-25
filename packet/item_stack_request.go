@@ -14,7 +14,6 @@ type ItemStackRequest struct {
 	Requests []protocol.ItemStackRequest
 }
 
-// ID ...
 func (*ItemStackRequest) ID() uint32 {
 	return IDItemStackRequest
 }

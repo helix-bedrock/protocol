@@ -57,7 +57,6 @@ type Text struct {
 	FilteredMessage protocol.Optional[string]
 }
 
-// ID ...
 func (*Text) ID() uint32 {
 	return IDText
 }

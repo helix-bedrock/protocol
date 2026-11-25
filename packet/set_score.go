@@ -12,7 +12,6 @@ type SetScore struct {
 	Entries []protocol.ScoreboardEntry
 }
 
-// ID ...
 func (*SetScore) ID() uint32 {
 	return IDSetScore
 }

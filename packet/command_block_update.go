@@ -59,7 +59,6 @@ type CommandBlockUpdate struct {
 	ExecuteOnFirstTick bool
 }
 
-// ID ...
 func (*CommandBlockUpdate) ID() uint32 {
 	return IDCommandBlockUpdate
 }

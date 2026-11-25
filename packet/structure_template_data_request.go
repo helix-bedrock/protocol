@@ -25,7 +25,6 @@ type StructureTemplateDataRequest struct {
 	RequestType byte
 }
 
-// ID ...
 func (pk *StructureTemplateDataRequest) ID() uint32 {
 	return IDStructureTemplateDataRequest
 }

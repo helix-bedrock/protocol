@@ -24,7 +24,6 @@ type ContainerOpen struct {
 	ContainerEntityUniqueID int64
 }
 
-// ID ...
 func (*ContainerOpen) ID() uint32 {
 	return IDContainerOpen
 }

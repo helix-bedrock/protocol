@@ -9,7 +9,6 @@ type EntityProperties struct {
 	FloatProperties []FloatEntityProperty
 }
 
-// Marshal ...
 func (e *EntityProperties) Marshal(r IO) {
 	Slice(r, &e.IntegerProperties)
 	Slice(r, &e.FloatProperties)
@@ -23,7 +22,6 @@ type IntegerEntityProperty struct {
 	Value int32
 }
 
-// Marshal ...
 func (i *IntegerEntityProperty) Marshal(r IO) {
 	r.Varuint32(&i.Index)
 	r.Varint32(&i.Value)
@@ -37,7 +35,6 @@ type FloatEntityProperty struct {
 	Value float32
 }
 
-// Marshal ...
 func (f *FloatEntityProperty) Marshal(r IO) {
 	r.Varuint32(&f.Index)
 	r.Float32(&f.Value)

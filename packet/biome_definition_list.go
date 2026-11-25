@@ -16,7 +16,6 @@ type BiomeDefinitionList struct {
 	StringList []string
 }
 
-// ID ...
 func (*BiomeDefinitionList) ID() uint32 {
 	return IDBiomeDefinitionList
 }

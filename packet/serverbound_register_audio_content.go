@@ -8,7 +8,6 @@ type ServerboundRegisterAudioContent struct {
 	Registrations []protocol.AudioContentRegistration
 }
 
-// ID ...
 func (*ServerboundRegisterAudioContent) ID() uint32 {
 	return IDServerboundRegisterAudioContent
 }

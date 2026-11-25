@@ -32,7 +32,6 @@ type NPCRequest struct {
 	SceneName string
 }
 
-// ID ...
 func (*NPCRequest) ID() uint32 {
 	return IDNPCRequest
 }

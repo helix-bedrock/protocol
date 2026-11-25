@@ -22,7 +22,6 @@ type ResourcePackClientResponse struct {
 	PacksToDownload []string
 }
 
-// ID ...
 func (*ResourcePackClientResponse) ID() uint32 {
 	return IDResourcePackClientResponse
 }

@@ -54,7 +54,6 @@ type AddActor struct {
 	PassengerOfBlock protocol.Optional[protocol.PassengerOfBlockData]
 }
 
-// ID ...
 func (*AddActor) ID() uint32 {
 	return IDAddActor
 }

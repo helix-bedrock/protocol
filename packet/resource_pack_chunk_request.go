@@ -14,7 +14,6 @@ type ResourcePackChunkRequest struct {
 	ChunkIndex int32
 }
 
-// ID ...
 func (*ResourcePackChunkRequest) ID() uint32 {
 	return IDResourcePackChunkRequest
 }

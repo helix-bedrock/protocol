@@ -17,7 +17,6 @@ type BlockPickRequest struct {
 	HotBarSlot byte
 }
 
-// ID ...
 func (*BlockPickRequest) ID() uint32 {
 	return IDBlockPickRequest
 }

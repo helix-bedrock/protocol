@@ -30,7 +30,6 @@ type ClientBoundControlSchemeSet struct {
 	ControlScheme byte
 }
 
-// ID ...
 func (*ClientBoundControlSchemeSet) ID() uint32 {
 	return IDClientBoundControlSchemeSet
 }

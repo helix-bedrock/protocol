@@ -53,7 +53,6 @@ type ClientBoundMapItemData struct {
 	Pixels protocol.Optional[[]color.RGBA]
 }
 
-// ID ...
 func (*ClientBoundMapItemData) ID() uint32 {
 	return IDClientBoundMapItemData
 }

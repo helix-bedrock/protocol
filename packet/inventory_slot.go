@@ -25,7 +25,6 @@ type InventorySlot struct {
 	NewItem protocol.ItemInstance
 }
 
-// ID ...
 func (*InventorySlot) ID() uint32 {
 	return IDInventorySlot
 }

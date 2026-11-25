@@ -13,7 +13,6 @@ type ServerboundCursorItemDrag struct {
 	State uint8
 }
 
-// ID ...
 func (*ServerboundCursorItemDrag) ID() uint32 {
 	return IDServerboundCursorItemDrag
 }

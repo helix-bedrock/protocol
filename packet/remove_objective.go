@@ -12,7 +12,6 @@ type RemoveObjective struct {
 	ObjectiveName string
 }
 
-// ID ...
 func (*RemoveObjective) ID() uint32 {
 	return IDRemoveObjective
 }

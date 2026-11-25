@@ -21,7 +21,6 @@ type SetPlayerFurnaceOptions struct {
 	FurnaceOptions protocol.FurnaceOptions
 }
 
-// ID ...
 func (*SetPlayerFurnaceOptions) ID() uint32 {
 	return IDSetPlayerFurnaceOptions
 }

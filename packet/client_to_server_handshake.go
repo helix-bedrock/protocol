@@ -11,7 +11,6 @@ type ClientToServerHandshake struct {
 	// ClientToServerHandshake has no fields.
 }
 
-// ID ...
 func (*ClientToServerHandshake) ID() uint32 {
 	return IDClientToServerHandshake
 }

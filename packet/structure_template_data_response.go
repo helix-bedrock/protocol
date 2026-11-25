@@ -26,7 +26,6 @@ type StructureTemplateDataResponse struct {
 	StructureTemplate map[string]any
 }
 
-// ID ...
 func (pk *StructureTemplateDataResponse) ID() uint32 {
 	return IDStructureTemplateDataResponse
 }

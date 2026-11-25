@@ -20,7 +20,6 @@ type CameraAimAssistPresets struct {
 	Operation byte
 }
 
-// ID ...
 func (*CameraAimAssistPresets) ID() uint32 {
 	return IDCameraAimAssistPresets
 }
