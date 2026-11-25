@@ -12783,14 +12783,10 @@
         },
         {
           "name": "type",
-          "type": "varint"
-        },
-        {
-          "name": "type_2",
           "type": [
             "mapper",
             {
-              "type": "zigzag32",
+              "type": "varint",
               "mappings": {
                 "0": "coordinates",
                 "1": "hide"
@@ -12803,7 +12799,7 @@
           "type": [
             "switch",
             {
-              "compareTo": "type_2",
+              "compareTo": "type",
               "fields": {
                 "coordinates": "vec3f",
                 "hide": "void"
